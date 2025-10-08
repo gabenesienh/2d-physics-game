@@ -1,4 +1,7 @@
-// Platformer game
+//TODO: better description here
+//TODO: readme file
+
+// 2D physics game
 
 #include <SDL2/SDL.h>
 
