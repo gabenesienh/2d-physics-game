@@ -89,8 +89,8 @@ void kill() {
         delete gobj;
     }
 
-    collisionTree->clear();
-    delete(collisionTree);
+    gameObjectsTree->clear();
+    delete(gameObjectsTree);
 
     SDL_DestroyWindow(window);
     SDL_Quit();

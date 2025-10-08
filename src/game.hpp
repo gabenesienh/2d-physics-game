@@ -3,13 +3,13 @@
 #ifndef GAME_HPP
 #define GAME_HPP
 
-#include <deque>
+#include <vector>
 
 #include "levels.hpp"
 #include "objects.hpp"
 #include "quadtree.hpp"
 
-using std::deque;
+using std::vector;
 
 // Possible game states
 const int GS_LAUNCHED = 0;
@@ -37,12 +37,12 @@ extern int gameState;
 extern Level* loadedLevel;
 
 // The objects currently present in the game
-extern deque<GameObject*> gameObjects;
+extern vector<GameObject*> gameObjects;
 
 // Tree structure currently containing pointers to the bounding boxes of all
 // objects in-game
 // Should be remade each frame
-extern QuadTree* collisionTree;
+extern QuadTree* gameObjectsTree;
 
 // The player object in gameObjects
 extern Player* player;

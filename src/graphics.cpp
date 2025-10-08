@@ -55,7 +55,7 @@ void doRender() {
 
     if (debugMode & DEBUG_SHOW_QUADS) {
         // Show boundaries of the collision tree
-        drawTree(collisionTree);
+        drawTree(gameObjectsTree);
     }
 
     for (GameObject* gobj : gameObjects) {

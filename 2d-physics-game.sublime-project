@@ -1,0 +1,37 @@
+{
+	"folders":
+	[
+		{
+			"path": ".",
+			"folder_exclude_patterns": [
+				"build",
+			],
+		}
+	],
+	"settings":
+	{
+		"rulers": [80],
+		"tab_size": 4,
+		"translate_tabs_to_spaces": true,
+		"use_tab_stops": true,
+	},
+	"build_systems":
+	[
+		{
+			"name": "Make",
+			"shell_cmd": "make -C ../build",
+		},
+	],
+	"debugger_configurations":
+	[
+		{
+			"type": "gdb",
+			"request": "launch",
+			"name": "Launch Program",
+			"target": "${file_path}/build/2d-physics-game",
+			"cwd": "${folder}",
+			"valuesFormatting": "parseText",
+			"terminal": "",
+		},
+	],
+}

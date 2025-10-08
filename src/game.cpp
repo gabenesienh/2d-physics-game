@@ -1,14 +1,14 @@
-//TODO: scale collisionTree bounds with currently loaded level
+//TODO: scale gameObjectsTree bounds with currently loaded level
 //TODO: static quadtree for tiles
 
 #include "game.hpp"
 
 #include <SDL2/SDL.h>
 #include <cmath>
-#include <deque>
 #include <iostream>
 #include <iomanip>
 #include <string>
+#include <vector>
 
 #include "events.hpp"
 #include "levels.hpp"
@@ -18,10 +18,10 @@
 #include "util.hpp"
 
 using std::min;
-using std::deque;
 using std::cin, std::cout, std::endl;
 using std::setw;
 using std::string;
+using std::vector;
 
 // Usage: speedY += speedY*GRAV_MULT + GRAV_ADD
 const double GRAV_ADD = 0.15;
@@ -34,23 +34,17 @@ Level* loadLevel(string levelName);
 // Sends debug info to standard output, based on the value of debugMode
 void printDebugInfo();
 
-int debugMode = 0;
-
-// Counts up to 1 and then resets to zero
-// Used for delaying debug output
-double debugOutputTimer = 0;
-
 int gameState = GS_LAUNCHED;
 
+int    debugMode = 0;
+double debugOutputTimer = 0; // Used for delaying std::cout
+
 Player* player;
+Level*  loadedLevel; // Receives a value upon calling loadLevel
 
-// Points to a copy of a level from levelsTable
-// Receives a value upon calling loadLevel
-Level* loadedLevel;
+vector<GameObject*> gameObjects = {};
 
-deque<GameObject*> gameObjects = {};
-
-QuadTree* collisionTree = new QuadTree(
+QuadTree* gameObjectsTree = new QuadTree(
     AABB(
         nullptr,
         {WINDOW_WIDTH/2, WINDOW_HEIGHT/2},
@@ -59,9 +53,7 @@ QuadTree* collisionTree = new QuadTree(
     )
 );
 
-// Stores last frame's mouseStates
-// Used to detect presses and releases
-array<bool, 5> mouseStatesTap = {false};
+array<bool, 5> mouseStatesTap = {false}; // Stores previous frame's mouseStates
 
 void doGame() {
 switch (gameState) {
@@ -123,7 +115,7 @@ case GS_STARTED:
     /* -- Physics -- */
 
     // Wipe last frame's collision tree
-    collisionTree->clear();
+    gameObjectsTree->clear();
 
     for (GameObject* gobj : gameObjects) {
         // Apply gravity to objects
@@ -147,7 +139,7 @@ case GS_STARTED:
         }
 
         // Insert object bounding boxes back into the collision tree
-        collisionTree->insert(gobj->getBounds());
+        gameObjectsTree->insert(gobj->getBounds());
     }
 
     /* -- Other -- */
