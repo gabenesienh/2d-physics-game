@@ -1,4 +1,4 @@
-//TODO: scale gameObjectsTree bounds with currently loaded level
+//TODO: scale trees' bounds with currently loaded level
 //TODO: static quadtree for tiles
 
 #include "game.hpp"
@@ -53,6 +53,15 @@ QuadTree* gameObjectsTree = new QuadTree(
     )
 );
 
+QuadTree* tilesTree = new QuadTree(
+    AABB(
+        nullptr,
+        {WINDOW_WIDTH/2, WINDOW_HEIGHT/2},
+        (WINDOW_WIDTH/2) - 2,
+        (WINDOW_HEIGHT/2) - 2
+    )
+);
+
 array<bool, 5> mouseStatesTap = {false}; // Stores previous frame's mouseStates
 
 void doGame() {
@@ -96,7 +105,7 @@ case GS_STARTED:
         player->setDirection(DIR_RIGHT);
     }
 
-    // Fire projectiles with M1
+    //TEMP: Fire projectiles with M1
     if (mouseStates[SDL_BUTTON_LEFT]) {
         Projectile* proj = new Projectile(player, 8, 8);
         proj->teleport(
@@ -133,7 +142,7 @@ case GS_STARTED:
 
         gobj->tryMove(targetX, targetY);
 
-        // TEMPORARY INVISIBLE GROUND
+        //TEMP: Invisible ground
         if (gobj->getY() > 320) {
             gobj->teleport(gobj->getX(), 320);
         }

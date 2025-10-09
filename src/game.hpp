@@ -39,10 +39,13 @@ extern Level* loadedLevel;
 // The objects currently present in the game
 extern vector<GameObject*> gameObjects;
 
-// Tree structure currently containing pointers to the bounding boxes of all
-// objects in-game
-// Should be remade each frame
+// Tree structure containing pointers to the bounding boxes of all objects
+// currently in-game
 extern QuadTree* gameObjectsTree;
+
+// Tree structure containing pointers to the bounding boxes of all level tiles
+// currently loaded
+extern QuadTree* tilesTree;
 
 // The player object in gameObjects
 extern Player* player;

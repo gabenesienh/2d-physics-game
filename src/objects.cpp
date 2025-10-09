@@ -252,6 +252,11 @@ Player::Player(double x, double y)
     this->teleport(x, y);
 }
 
+// Getters
+eObjTypes Player::getObjectType() {
+    return eObjTypes::player;
+}
+
 /* -- Projectile -- */
 
 // Constructors
@@ -268,4 +273,9 @@ Projectile::Projectile(GameObject* owner, double width, double height)
     if (owner != nullptr) {
         this->teleport(owner->getX(), owner->getY());
     }
+}
+
+// Getters
+eObjTypes Projectile::getObjectType() {
+    return eObjTypes::projectile;
 }

@@ -46,6 +46,14 @@ enum class eAnchorY {
     bottom
 };
 
+// Used to check for classes derived from GameObject
+// This maybe isn't a good implementation but I couldn't think of a better one
+enum class eObjTypes {
+    object,
+    player,
+    projectile
+};
+
 class GameObject;
 
 // Axis-aligned bounding box
@@ -106,6 +114,9 @@ class GameObject {
         double getScreenX() const;
         double getScreenY() const;
 
+        // Used to check for derived classes; should be overriden
+        virtual eObjTypes getObjectType() { return eObjTypes::object; };
+
         void setWidth(double width);
         void setHeight(double height);
         void setSpeedX(double speedX);
@@ -145,6 +156,8 @@ class Player : public GameObject {
     public:
         Player();
         Player(double x, double y);
+
+        eObjTypes getObjectType();
 };
 
 // A projectile which may harm entities on contact
@@ -156,6 +169,8 @@ class Projectile : public GameObject {
     public:
         Projectile();
         Projectile(GameObject* owner, double width, double height);
+
+        eObjTypes getObjectType();
 };
 
 #endif

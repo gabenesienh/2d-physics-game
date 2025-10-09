@@ -17,7 +17,6 @@ int main(int argc, char** argv) {
     if (!init()) return 1;
 
     debugMode =   DEBUG_PERFORMANCE_INFO
-                | DEBUG_PLAYER_INFO
                 | DEBUG_SHOW_HITBOXES
                 | DEBUG_SHOW_QUADS;
 

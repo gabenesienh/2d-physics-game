@@ -1,3 +1,6 @@
+//TODO: stop rendering objects out of view
+//TODO: refactor color setting code
+
 #include "graphics.hpp"
 
 #include <SDL2/SDL.h>
@@ -12,7 +15,7 @@
 using std::abs, std::max;
 
 void setColors();
-void drawTree(QuadTree* tree); // Recursively draw a QuadTree
+void drawTree(QuadTree* tree, Uint32 color); // Recursively draw a QuadTree
 
 // Used for rendering game objects as solid rectangles in debug mode
 // X and Y refer to screen position rather than game position
@@ -30,7 +33,8 @@ Uint32 debugHitboxColor;
 Uint32 debugAnchorColor;
 Uint32 debugDirectionColor;
 Uint32 debugPlayerAimColor;
-Uint32 debugQuadtreeColor;
+Uint32 debugObjTreeColor;
+Uint32 debugTileTreeColor;
 
 void doRender() {
     if (!isColorsSet) setColors();
@@ -54,8 +58,9 @@ void doRender() {
     }
 
     if (debugMode & DEBUG_SHOW_QUADS) {
-        // Show boundaries of the collision tree
-        drawTree(gameObjectsTree);
+        // Show boundaries of the collision trees
+        drawTree(gameObjectsTree, debugObjTreeColor);
+        drawTree(tilesTree, debugTileTreeColor);
     }
 
     for (GameObject* gobj : gameObjects) {
@@ -166,14 +171,14 @@ void drawRectangle(SDL_Surface* surface, SDL_Rect& rendererRect, Uint32 color, i
     drawLine(surface, rendererRect, color, x0, y1, x0, y0);
 }
 
-void drawTree(QuadTree* tree) {
+void drawTree(QuadTree* tree, Uint32 color) {
     rendererRect.w = 1;
     rendererRect.h = 1;
 
     AABB& bounds = tree->getBounds();
 
     drawRectangle(
-        gameSurface, rendererRect, debugQuadtreeColor,
+        gameSurface, rendererRect, color,
         bounds.center.x - bounds.halfWidth,
         bounds.center.y - bounds.halfHeight,
         bounds.center.x + bounds.halfWidth,
@@ -182,7 +187,7 @@ void drawTree(QuadTree* tree) {
 
     if (tree->getQuadrants()[0] != nullptr) {
         for (QuadTree* quad : tree->getQuadrants()) {
-            drawTree(quad);
+            drawTree(quad, color);
         }
     }
 }
@@ -231,11 +236,18 @@ void setColors() {
         31
     );
 
-    debugQuadtreeColor = SDL_MapRGB(
+    debugObjTreeColor = SDL_MapRGB(
         gameSurface->format,
         255,
         127,
         63
+    );
+
+    debugTileTreeColor = SDL_MapRGB(
+        gameSurface->format,
+        63,
+        127,
+        0
     );
 
     isColorsSet = true;
