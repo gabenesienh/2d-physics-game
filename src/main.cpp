@@ -21,6 +21,11 @@ int main(int argc, char** argv) {
                 | DEBUG_SHOW_HITBOXES
                 | DEBUG_SHOW_QUADS;
 
+    if (debugMode != 0) {
+        // Prevent a freeze related to breakpoints on Linux
+        SDL_SetHint(SDL_HINT_MOUSE_AUTO_CAPTURE, "0");
+    }
+
     while (true) {
         // Update delta time
         dt = SDL_GetPerformanceCounter() - ticksLast;
