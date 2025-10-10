@@ -57,7 +57,7 @@ enum class eObjTypes {
 class GameObject;
 
 // Axis-aligned bounding box
-struct AABB {
+struct AABB : public BoundingBox {
     const GameObject* parent = nullptr; // Who this AABB belongs to, if anyone
     vec2              center;
     double            halfWidth;

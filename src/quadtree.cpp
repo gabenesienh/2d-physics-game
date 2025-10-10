@@ -15,9 +15,9 @@ QuadTree::QuadTree(AABB bounds)
     : bounds(bounds) {}
 
 // Getters
-AABB&               QuadTree::getBounds()          { return this->bounds; }
-vector<AABB*>       QuadTree::getItems() const     { return this->items; }
-array<QuadTree*, 4> QuadTree::getQuadrants() const { return this->quads; }
+AABB&                QuadTree::getBounds()          { return this->bounds; }
+vector<BoundingBox*> QuadTree::getItems() const     { return this->items; }
+array<QuadTree*, 4>  QuadTree::getQuadrants() const { return this->quads; }
 
 // Other methods
 void QuadTree::clear() {
@@ -68,7 +68,7 @@ void QuadTree::subdivide() {
     );
 }
 
-int QuadTree::findFittingQuadrant(AABB& box) const {
+int QuadTree::findFittingQuadrant(BoundingBox& box) const {
     bool fitsNorth = false;
     bool fitsSouth = false;
     bool fitsWest = false;
@@ -115,7 +115,7 @@ int QuadTree::findFittingQuadrant(AABB& box) const {
     return -1;
 }
 
-void QuadTree::insert(AABB& box) {
+void QuadTree::insert(BoundingBox& box) {
     // Does this node already have quadrants generated?
     if (this->quads[0] != nullptr) {
         int fitsIndex = this->findFittingQuadrant(box);
@@ -160,13 +160,13 @@ void QuadTree::insert(AABB& box) {
         }
     }
 }
-vector<AABB*> QuadTree::findPossibleCollisions(
-    AABB& box,
-    vector<AABB*> acc
+vector<BoundingBox*> QuadTree::findPossibleCollisions(
+    BoundingBox& box,
+    vector<BoundingBox*> acc
 ) const {
-    // acc is an accumulator with all items that could collide with this AABB
+    // acc is an accumulator with all items that could collide with this box
 
-    // Recursively add items from other quadrants this AABB fits into
+    // Recursively add items from other quadrants this box fits into
     if (this->quads[0] != nullptr) {
         int index = this->findFittingQuadrant(box);
 
@@ -176,7 +176,7 @@ vector<AABB*> QuadTree::findPossibleCollisions(
     }
 
     // Add all items from this current node
-    for (AABB* box : this->items) {
+    for (BoundingBox* box : this->items) {
         acc.push_back(box);
     }
 

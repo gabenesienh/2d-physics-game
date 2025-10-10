@@ -31,6 +31,8 @@ vec2 vec2::normalized() {
     };
 }
 
+BoundingBox::~BoundingBox() {};
+
 bool init() {
     if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
         cout << "Error initializing SDL: " << SDL_GetError() << endl;

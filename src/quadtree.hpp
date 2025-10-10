@@ -17,21 +17,21 @@ const int QUAD_NE = 1;
 const int QUAD_SW = 2;
 const int QUAD_SE = 3;
 
-// A quadtree for holding AABBs
+// A quadtree for holding BoundingBoxes
 // Can either be the root node of a quadtree or a quadrant (a nested quadtree)
 class QuadTree {
     private:
         static const int BUCKET_CAPACITY = 4;
 
-        AABB                bounds;
-        vector<AABB*>       items;
-        array<QuadTree*, 4> quads   = {nullptr}; // NW, NE, SW and SE quadrants
+        AABB                 bounds;
+        vector<BoundingBox*> items;
+        array<QuadTree*, 4>  quads   = {nullptr}; // NW, NE, SW and SE quadrants
     public:
         QuadTree(AABB bounds);
 
-        AABB&               getBounds();
-        vector<AABB*>       getItems() const;
-        array<QuadTree*, 4> getQuadrants() const;
+        AABB&                getBounds();
+        vector<BoundingBox*> getItems() const;
+        array<QuadTree*, 4>  getQuadrants() const;
 
         // Clears the items of this node and clear its existing quadrants
         // recursively
@@ -44,19 +44,19 @@ class QuadTree {
         // Returns -1 on error or if the box can't fully fit into any quadrant
         // NOTE: will *not* check if the quadrants actually exist! (i.e. if this
         // node has been subdivided)
-        int findFittingQuadrant(AABB& box) const;
+        int findFittingQuadrant(BoundingBox& box) const;
 
         // Attempt to insert an item into this node
         // If necessary, this node will be subdivided and all its items will
         // try to fit into a quadrant
-        void insert(AABB& box);
+        void insert(BoundingBox& box);
 
-        // Recursively look for items (AABBs) which intersect the given box's
+        // Recursively look for items (boxes) which intersect the given box's
         // Returns a list of matched items
         // NOTE: do not specify a value for acc when calling!
-        vector<AABB*> findPossibleCollisions(
-            AABB& box,
-            vector<AABB*> acc = {}
+        vector<BoundingBox*> findPossibleCollisions(
+            BoundingBox& box,
+            vector<BoundingBox*> acc = {}
         ) const;
 };
 

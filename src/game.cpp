@@ -70,6 +70,10 @@ case GS_LAUNCHED:
     // Load level
     loadedLevel = loadLevel("test");
 
+    for (Tile& tile : loadedLevel->getTiles()) {
+        tilesTree->insert(tile.getBounds());
+    }
+
     // Spawn player
     player = new Player(
         WINDOW_WIDTH/2,

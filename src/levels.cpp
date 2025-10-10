@@ -19,8 +19,8 @@ Level::Level(string displayName, vector<Tile> tiles) {
 }
 
 // Getters
-string       Level::getDisplayName() const { return this->displayName; }
-vector<Tile> Level::getTiles() const       { return this->tiles; }
+string        Level::getDisplayName() const { return this->displayName; }
+vector<Tile>& Level::getTiles()             { return this->tiles; }
 
 const unordered_map<string, Level> levelsTable = {
     {"test", Level(

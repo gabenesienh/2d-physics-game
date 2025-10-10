@@ -21,8 +21,8 @@ class Level {
     public:
         Level(string displayName, vector<Tile> tiles);
 
-        string       getDisplayName() const;
-        vector<Tile> getTiles() const;
+        string        getDisplayName() const;
+        vector<Tile>& getTiles();
 };
 
 // All Level definitions go here

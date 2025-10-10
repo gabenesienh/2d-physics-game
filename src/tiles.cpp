@@ -1,46 +1,61 @@
 #include "tiles.hpp"
 
+#include "util.hpp"
+
+/* -- TileBB -- */
+
+// Constructors
+TileBB::TileBB(Tile* parent, int gridX, int gridY)
+    : parent(parent),
+      gridX(gridX),
+      gridY(gridY) {}
+
+// Getters
+double TileBB::getTopY() const {
+    return this->gridY*TILEGRID_CELL_SIZE;
+}
+double TileBB::getBottomY() const {
+    int gridHeight = tileTypesTable.at(this->parent->getTypeId()).gridHeight;
+    return (this->gridY + gridHeight)*TILEGRID_CELL_SIZE;
+}
+double TileBB::getLeftX() const {
+    return this->gridX*TILEGRID_CELL_SIZE;
+}
+double TileBB::getRightX() const {
+    int gridWidth = tileTypesTable.at(this->parent->getTypeId()).gridWidth;
+    return (this->gridX + gridWidth)*TILEGRID_CELL_SIZE;
+}
+
 /* -- TileType -- */
 
 // Constructors
-TileType::TileType(int gridWidth, int gridHeight) {
-    this->gridWidth = gridWidth;
-    this->gridHeight = gridHeight;
-}
-
-// Getters
-int TileType::getGridWidth() const  { return this->gridWidth; }
-int TileType::getGridHeight() const { return this->gridHeight; }
-
-// Other
-int TileType::getWidth() const {
-    return this->gridWidth*TILEGRID_CELL_SIZE;
-}
-int TileType::getHeight() const {
-    return this->gridHeight*TILEGRID_CELL_SIZE;
-}
+TileType::TileType(int gridWidth, int gridHeight)
+    : gridWidth(gridWidth),
+      gridHeight(gridHeight) {}
 
 /* -- Tile -- */
 
 // Constructors
-Tile::Tile(int typeId, int gridX, int gridY) {
-    this->typeId = typeId;
-    this->gridX = gridX;
-    this->gridY = gridY;
-}
+Tile::Tile(int typeId, int gridX, int gridY)
+    : typeId(typeId),
+      bounds(TileBB(this, gridX, gridY)) {}
 
 // Getters
-int Tile::getGridX() const      { return this->gridX; }
-int Tile::getGridY() const      { return this->gridY; }
-int Tile::getTypeId() const { return this->typeId; }
+int     Tile::getTypeId() const { return this->typeId; }
+TileBB& Tile::getBounds()       { return this->bounds; }
 
-/* -- Other -- */
-
+// Other methods
 int Tile::getX() const {
-    return this->gridX*TILEGRID_CELL_SIZE;
+    return this->bounds.gridX*TILEGRID_CELL_SIZE;
 }
 int Tile::getY() const {
-    return this->gridY*TILEGRID_CELL_SIZE;
+    return this->bounds.gridY*TILEGRID_CELL_SIZE;
+}
+int Tile::getWidth() const {
+    return tileTypesTable.at(this->typeId).gridWidth*TILEGRID_CELL_SIZE;
+}
+int Tile::getHeight() const {
+    return tileTypesTable.at(this->typeId).gridHeight*TILEGRID_CELL_SIZE;
 }
 
 // View the header file for info on constructor structures

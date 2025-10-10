@@ -43,13 +43,11 @@ void doRender() {
     SDL_FillRect(gameSurface, NULL, blackColor);
 
     for (Tile& tile : loadedLevel->getTiles()) {
-        const TileType& tileType = tileTypesTable.at(tile.getTypeId());
-
         if (debugMode & DEBUG_SHOW_HITBOXES) {
             /* -- Draw tile collision boxes -- */
 
-            rendererRect.w = tileType.getWidth();
-            rendererRect.h = tileType.getHeight();
+            rendererRect.w = tile.getWidth();
+            rendererRect.h = tile.getHeight();
             rendererRect.x = tile.getX();
             rendererRect.y = tile.getY();
 

@@ -28,7 +28,7 @@
 			"type": "gdb",
 			"request": "launch",
 			"name": "Launch Program",
-			"target": "${file_path}/build/2d-physics-game",
+			"target": "build/2d-physics-game",
 			"cwd": "${folder}",
 			"valuesFormatting": "parseText",
 			"terminal": "",

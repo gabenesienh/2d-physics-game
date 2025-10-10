@@ -24,6 +24,16 @@ struct vec2 {
     vec2 normalized();
 };
 
+// Generic bounding box
+struct BoundingBox {
+    virtual double getTopY() const = 0;
+    virtual double getBottomY() const = 0;
+    virtual double getLeftX() const = 0;
+    virtual double getRightX() const = 0;
+
+    virtual ~BoundingBox() = 0;
+};
+
 // Initialize SDL
 extern bool init();
 
