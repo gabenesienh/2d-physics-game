@@ -279,3 +279,9 @@ Projectile::Projectile(GameObject* owner, double width, double height)
 eObjTypes Projectile::getObjectType() {
     return eObjTypes::projectile;
 }
+
+// Other methods
+int Projectile::tickLifespan() {
+    this->lifespan--;
+    return this->lifespan;
+}

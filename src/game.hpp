@@ -26,8 +26,8 @@ const int DEBUG_SHOW_QUADS       = 0x10000;
 // To be used with DEBUG_* consts, use bitwise operations to combine flags
 extern int debugMode;
 
-// Delta time
-// Should be measured in 60ths of a second for game physics to work correctly
+// Delta time, measured in 60ths of a second
+// Capped at 60
 extern double dt;
 
 // The current game state, uses GS_* constants

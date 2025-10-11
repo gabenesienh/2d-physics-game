@@ -1,5 +1,6 @@
 //TODO: scale trees' bounds with currently loaded level
-//TODO: static quadtree for tiles
+//TODO: projectile lifespan
+//TODO: refactor GameObject derivatives to use composition
 
 #include "game.hpp"
 
@@ -15,6 +16,7 @@
 #include "objects.hpp"
 #include "preferences.hpp"
 #include "quadtree.hpp"
+#include "tiles.hpp"
 #include "util.hpp"
 
 using std::min;
@@ -131,18 +133,26 @@ case GS_STARTED:
     gameObjectsTree->clear();
 
     for (GameObject* gobj : gameObjects) {
+        /*
+        if (gobj->getObjectType() == eObjTypes::projectile) {
+            GameObject* proj = gobj; // Alias for convenience
+
+            // Kill projectiles whose lifespan has ended (duh)
+        }
+        */
+
         // Apply gravity to objects
         gobj->thrust(
             0,
-            (gobj->getSpeedY()*GRAV_MULT + GRAV_ADD)*gobj->getWeight()*dt
+            (gobj->getSpeedY()*GRAV_MULT + GRAV_ADD)*gobj->getWeight()
         );
 
         // Cap falling speed
         gobj->setSpeedY(min(gobj->getSpeedY(), GRAV_CAP));
 
         // Displace game objects based on their speed
-        double targetX = gobj->getX() + gobj->getSpeedX()*dt;
-        double targetY = gobj->getY() + gobj->getSpeedY()*dt;
+        double targetX = gobj->getX() + gobj->getSpeedX();
+        double targetY = gobj->getY() + gobj->getSpeedY();
 
         gobj->tryMove(targetX, targetY);
 

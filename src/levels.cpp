@@ -13,9 +13,13 @@ using std::vector;
 /* -- Level -- */
 
 // Constructors
-Level::Level(string displayName, vector<Tile> tiles) {
-    this->displayName = displayName;
-    this->tiles = tiles;
+Level::Level(string displayName, vector<Tile> tiles)
+    : displayName(displayName),
+      tiles(tiles) {
+    // Set parent attribute for each tile's bounding box
+    for (Tile& tile : this->tiles) {
+        tile.getBounds().parent = &tile;
+    }
 }
 
 // Getters
@@ -84,3 +88,4 @@ const unordered_map<string, Level> levelsTable = {
         }
     )}
 };
+

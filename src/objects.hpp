@@ -165,10 +165,13 @@ class Player : public GameObject {
 class Projectile : public GameObject {
     private:
         GameObject* owner    = nullptr; // Who this projectile belongs to
-        double      lifespan = 180; // In frames
+        double      lifespan = 60; // Ideally, should be measured in frames
     public:
         Projectile();
         Projectile(GameObject* owner, double width, double height);
+
+        // Reduces lifespan by 1 and returns the new value
+        int tickLifespan();
 
         eObjTypes getObjectType();
 };

@@ -19,6 +19,7 @@ class Level {
         string       displayName;
         vector<Tile> tiles;
     public:
+        // Will also set the "parent" attribute for all its tiles' TileBBs
         Level(string displayName, vector<Tile> tiles);
 
         string        getDisplayName() const;

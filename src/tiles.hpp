@@ -15,14 +15,18 @@ const int TILEGRID_CELL_SIZE = 32;
 
 class Tile;
 
-// Tile bounding box
-// "grid" attributes are measured in grid cells
+/* Tile bounding box
+ * "grid" attributes are measured in grid cells
+ *
+ * Care must be taken with the "parent" attribute, since it can be invalidated
+ * if the vector (or other structure) containing the parent tile gets resized
+ */
 struct TileBB : public BoundingBox {
-    const Tile* parent = nullptr;
-    int         gridX;
-    int         gridY;
+    Tile* parent = nullptr;
+    int   gridX;
+    int   gridY;
 
-    TileBB(Tile* parent, int gridX, int gridY);
+    TileBB(int gridX, int gridY);
 
     // Gets the X or Y coordinate at the very edge of the specified side
     double getTopY() const;

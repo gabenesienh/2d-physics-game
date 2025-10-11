@@ -5,9 +5,8 @@
 /* -- TileBB -- */
 
 // Constructors
-TileBB::TileBB(Tile* parent, int gridX, int gridY)
-    : parent(parent),
-      gridX(gridX),
+TileBB::TileBB(int gridX, int gridY)
+    : gridX(gridX),
       gridY(gridY) {}
 
 // Getters
@@ -38,7 +37,7 @@ TileType::TileType(int gridWidth, int gridHeight)
 // Constructors
 Tile::Tile(int typeId, int gridX, int gridY)
     : typeId(typeId),
-      bounds(TileBB(this, gridX, gridY)) {}
+      bounds(TileBB(gridX, gridY)) {}
 
 // Getters
 int     Tile::getTypeId() const { return this->typeId; }

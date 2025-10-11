@@ -29,6 +29,9 @@ int main(int argc, char** argv) {
         // Update delta time
         dt = SDL_GetPerformanceCounter() - ticksLast;
         dt *= 60.0/SDL_GetPerformanceFrequency();
+
+        if (dt < 1) continue;
+
         ticksLast = SDL_GetPerformanceCounter();
 
         if (!doEvents()) break;
