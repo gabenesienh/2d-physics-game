@@ -14,6 +14,8 @@ SDL_Window* window;
 SDL_Surface* winSurface;
 SDL_Surface* gameSurface;
 
+/* -- vec2 class -- */
+
 bool vec2::operator==(const vec2& other) const {
     return (this->x == other.x && this->y == other.y);
 }
@@ -31,7 +33,43 @@ vec2 vec2::normalized() {
     };
 }
 
+/* -- BoundingBox class -- */
+
+bool BoundingBox::intersects(BoundingBox& other) const {
+    bool intersectsY = false;
+    bool intersectsX = false;
+
+    if (this->getBottomY() > other.getTopY()
+    &&  this->getTopY()    < other.getBottomY()) {
+        // This box might be intersecting the other from the top side
+        intersectsY = true;
+    } else if (this->getTopY()    < other.getBottomY()
+      &&       this->getBottomY() > other.getTopY()   ) {
+        // This box might be intersecting the other from the bottom side
+        intersectsY = true;
+    }
+
+    // These boxes' top and bottom sides can't collide, so they can't intersect
+    if (!intersectsY) return false;
+
+    if (this->getRightX() > other.getLeftX()
+    &&  this->getLeftX()  < other.getRightX()) {
+        // This box might be intersecting the other from the left side
+        intersectsX = true;
+    } else if (this->getLeftX()  < other.getRightX()
+      &&       this->getRightX() > other.getLeftX() ) {
+        // This box might be intersecting the other from the right side
+        intersectsX = true;
+    }
+
+    if (!intersectsX) return false;
+
+    return true;
+}
+
 BoundingBox::~BoundingBox() {};
+
+/* -- Utility methods -- */
 
 bool init() {
     if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {

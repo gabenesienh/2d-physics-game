@@ -11,8 +11,9 @@ using std::vector;
 /* -- QuadTree -- */
 
 // Constructors
-QuadTree::QuadTree(AABB bounds)
-    : bounds(bounds) {}
+QuadTree::QuadTree(int level, AABB bounds)
+    : level(level),
+      bounds(bounds) {}
 
 // Getters
 AABB&                QuadTree::getBounds()          { return this->bounds; }
@@ -55,15 +56,19 @@ void QuadTree::subdivide() {
     };
 
     this->quads[0] = new QuadTree(
+        this->level + 1,
         AABB(nullptr, nwCenter, this->bounds.halfWidth/2, this->bounds.halfHeight/2)
     );
     this->quads[1] = new QuadTree(
+        this->level + 1,
         AABB(nullptr, neCenter, this->bounds.halfWidth/2, this->bounds.halfHeight/2)
     );
     this->quads[2] = new QuadTree(
+        this->level + 1,
         AABB(nullptr, swCenter, this->bounds.halfWidth/2, this->bounds.halfHeight/2)
     );
     this->quads[3] = new QuadTree(
+        this->level + 1,
         AABB(nullptr, seCenter, this->bounds.halfWidth/2, this->bounds.halfHeight/2)
     );
 }
@@ -76,20 +81,16 @@ int QuadTree::findFittingQuadrant(BoundingBox& box) const {
 
     // Check if the given box fits any possible halves of this node's bounds
     // In theory, no more than 2 of these should be true at the same time
-    if (box.getTopY() >= this->bounds.getTopY()
-    &&  box.getBottomY() <= this->bounds.center.y) {
+    if (box.getBottomY() <= this->bounds.center.y) {
         fitsNorth = true;
     }
-    if (box.getTopY() >= this->bounds.center.y
-    &&  box.getBottomY() <= this->bounds.getBottomY()) {
+    if (box.getTopY() >= this->bounds.center.y) {
         fitsSouth = true;
     }
-    if (box.getLeftX() >= this->bounds.getLeftX()
-    &&  box.getRightX() <= this->bounds.center.x) {
+    if (box.getRightX() <= this->bounds.center.x) {
         fitsWest = true;
     }
-    if (box.getLeftX() >= this->bounds.center.x
-    &&  box.getRightX() <= this->bounds.getRightX()) {
+    if (box.getLeftX() >= this->bounds.center.x) {
         fitsEast = true;
     }
 
@@ -116,6 +117,12 @@ int QuadTree::findFittingQuadrant(BoundingBox& box) const {
 }
 
 void QuadTree::insert(BoundingBox& box) {
+    // Ignore this box if it's outside the bounds of the root node of the tree
+    if (this->level == 0
+    && !box.intersects(this->bounds)) {
+        return;
+    }
+
     // Does this node already have quadrants generated?
     if (this->quads[0] != nullptr) {
         int fitsIndex = this->findFittingQuadrant(box);
@@ -132,7 +139,8 @@ void QuadTree::insert(BoundingBox& box) {
     this->items.push_back(&box);
 
     // Split this node if it's now above capacity
-    if (this->items.size() > QuadTree::BUCKET_CAPACITY) {
+    if (this->items.size() > QuadTree::BUCKET_CAPACITY
+    &&  this->level < QuadTree::MAX_LEVELS) {
         if (this->quads[0] == nullptr) {
             this->subdivide();
         }
@@ -166,16 +174,25 @@ vector<BoundingBox*> QuadTree::findPossibleCollisions(
 ) const {
     // acc is an accumulator with all items that could collide with this box
 
-    // Recursively add items from other quadrants this box fits into
+    // Recursively consider items from this node's quadrants, if it has any
     if (this->quads[0] != nullptr) {
         int index = this->findFittingQuadrant(box);
 
         if (index != -1) {
+            // If this box fully fits into a quadrant, consider collisions with
+            // only items that are within that quadrant
             acc = this->quads[index]->findPossibleCollisions(box, acc);
+        } else {
+            // If not, consider collisions with items in all of this node's
+            // quadrants
+            acc = this->quads[0]->findPossibleCollisions(box, acc);
+            acc = this->quads[1]->findPossibleCollisions(box, acc);
+            acc = this->quads[2]->findPossibleCollisions(box, acc);
+            acc = this->quads[3]->findPossibleCollisions(box, acc);
         }
     }
 
-    // Add all items from this current node
+    // Consider all items from this node
     for (BoundingBox* box : this->items) {
         acc.push_back(box);
     }

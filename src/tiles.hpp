@@ -28,7 +28,6 @@ struct TileBB : public BoundingBox {
 
     TileBB(int gridX, int gridY);
 
-    // Gets the X or Y coordinate at the very edge of the specified side
     double getTopY() const;
     double getBottomY() const;
     double getLeftX() const;

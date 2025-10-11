@@ -31,6 +31,9 @@ struct BoundingBox {
     virtual double getLeftX() const = 0;
     virtual double getRightX() const = 0;
 
+    // Returns true if this box intersects the other
+    bool intersects(BoundingBox& other) const;
+
     virtual ~BoundingBox() = 0;
 };
 

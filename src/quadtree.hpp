@@ -22,12 +22,14 @@ const int QUAD_SE = 3;
 class QuadTree {
     private:
         static const int BUCKET_CAPACITY = 4;
+        static const int MAX_LEVELS = 10;
 
+        int                  level;
         AABB                 bounds;
         vector<BoundingBox*> items;
         array<QuadTree*, 4>  quads   = {nullptr}; // NW, NE, SW and SE quadrants
     public:
-        QuadTree(AABB bounds);
+        QuadTree(int level, AABB bounds);
 
         AABB&                getBounds();
         vector<BoundingBox*> getItems() const;

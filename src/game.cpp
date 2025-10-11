@@ -1,5 +1,6 @@
 //TODO: scale trees' bounds with currently loaded level
 //TODO: projectile lifespan
+//TODO: proper ground collision
 
 #include "game.hpp"
 
@@ -46,6 +47,7 @@ Level*  loadedLevel; // Receives a value upon calling loadLevel
 vector<GameObject*> gameObjects = {};
 
 QuadTree* gameObjectsTree = new QuadTree(
+    0,
     AABB(
         nullptr,
         {WINDOW_WIDTH/2, WINDOW_HEIGHT/2},
@@ -55,6 +57,7 @@ QuadTree* gameObjectsTree = new QuadTree(
 );
 
 QuadTree* tilesTree = new QuadTree(
+    0,
     AABB(
         nullptr,
         {WINDOW_WIDTH/2, WINDOW_HEIGHT/2},
@@ -155,9 +158,18 @@ case GS_STARTED:
 
         gobj->tryMove(targetX, targetY);
 
-        //TEMP: Invisible ground
-        if (gobj->getY() > 320) {
-            gobj->teleport(gobj->getX(), 320);
+        // Find all tiles that could possibly be colliding with this object
+        vector<BoundingBox*> possibleCols;
+        possibleCols = tilesTree->findPossibleCollisions(gobj->getBounds());
+        
+        for (BoundingBox* possibleCol : possibleCols) {
+            if (gobj->getBounds().intersects(*possibleCol)) {
+                gobj->teleport(
+                    gobj->getX(),
+                    320
+                );
+                gobj->setSpeedY(0);
+            }
         }
 
         // Insert object bounding boxes back into the collision tree

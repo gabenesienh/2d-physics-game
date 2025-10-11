@@ -25,12 +25,18 @@ const vec2 DIR_RIGHT = {1, 0};
 const vec2 DIR_UP = {0, -1};
 const vec2 DIR_DOWN = {0, 1};
 
-// Pre-defined sets of directions an object is allowed to have
+// Sets of directions an object is allowed to have
 enum class eDirTypes {
     none,
     horizontal,
     orthogonal,
-    omni,
+    omni
+};
+
+// Controls the behavior of GameObject::walk
+enum class eWalkTypes {
+    grounded,
+    aerial
 };
 
 // Valid values for the position of a GameObject's alignment anchor
@@ -66,7 +72,6 @@ struct AABB : public BoundingBox {
 
     AABB(GameObject* parent, vec2 center, double halfWidth, double halfHeight);
 
-    // Gets the X or Y coordinate at the very edge of the specified side
     double getTopY() const;
     double getBottomY() const;
     double getLeftX() const;
@@ -76,19 +81,20 @@ struct AABB : public BoundingBox {
 // Abstract class for specialized objects to implement
 class GameObject {
     protected:
-        AABB      bounds        = AABB(this, {0, 0}, 8, 8);
-        eAnchorX  anchorOffsetX = eAnchorX::middle;
-        eAnchorY  anchorOffsetY = eAnchorY::middle;
-        double    speedX        = 0;
-        double    speedY        = 0;
-        double    moveSpeed     = 1;
-        string    state         = "";
-        vec2      direction     = DIR_NONE;
-        eDirTypes directionType = eDirTypes::none;
-        double    weight        = 1; // Simple multiplier
-        vec2      aimDirection  = DIR_NONE;
-        eAnchorX  aimOffsetX    = eAnchorX::middle; // The point from which
-        eAnchorY  aimOffsetY    = eAnchorY::middle; // projectiles spawn
+        AABB       bounds        = AABB(this, {0, 0}, 8, 8);
+        eAnchorX   anchorOffsetX = eAnchorX::middle;
+        eAnchorY   anchorOffsetY = eAnchorY::middle;
+        double     speedX        = 0;
+        double     speedY        = 0;
+        double     moveSpeed     = 1;
+        string     state         = "";
+        vec2       direction     = DIR_NONE;
+        eDirTypes  directionType = eDirTypes::none;
+        eWalkTypes walkType      = eWalkTypes::grounded;
+        double     weight        = 1; // Simple physics multiplier
+        vec2       aimDirection  = DIR_NONE;
+        eAnchorX   aimOffsetX    = eAnchorX::middle; // The point from which
+        eAnchorY   aimOffsetY    = eAnchorY::middle; // projectiles spawn
     public:
         AABB&     getBounds();
         eAnchorX  getAnchorOffsetX() const;

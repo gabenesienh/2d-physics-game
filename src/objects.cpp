@@ -188,13 +188,17 @@ bool GameObject::tryMove(double x, double y) {
 }
 void GameObject::walk() {
     this->speedX = this->direction.x * this->moveSpeed;
-    this->speedY = this->direction.y * this->moveSpeed;
+    if (this->walkType == eWalkTypes::aerial) {
+        this->speedY = this->direction.y * this->moveSpeed;
+    }
 }
 void GameObject::walk(vec2 direction) {
     direction = direction.normalized();
 
     this->speedX = direction.x * this->moveSpeed;
-    this->speedY = direction.y * this->moveSpeed;
+    if (this->walkType == eWalkTypes::aerial) {
+        this->speedY = direction.y * this->moveSpeed;
+    }
 }
 void GameObject::aimAt(vec2 target) {
     double aimX;
