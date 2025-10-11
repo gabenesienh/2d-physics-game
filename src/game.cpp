@@ -1,6 +1,5 @@
 //TODO: scale trees' bounds with currently loaded level
 //TODO: projectile lifespan
-//TODO: refactor GameObject derivatives to use composition
 
 #include "game.hpp"
 

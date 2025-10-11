@@ -1,5 +1,6 @@
 //TODO: refactor GameObject::getScreen* methods into helper functions
-//TODO: implement projectile lifespan
+//TODO: refactor GameObject derivatives to use composition...?
+//TODO: refactor BoundingBox derivatives to use composition...?
 
 // Game object class definitions and related logic
 
