@@ -1,6 +1,4 @@
 //TODO: refactor GameObject::getScreen* methods into helper functions
-//TODO: refactor GameObject derivatives to use composition...?
-//TODO: refactor BoundingBox derivatives to use composition...?
 
 // Game object class definitions and related logic
 
@@ -95,6 +93,7 @@ class GameObject {
         vec2       aimDirection  = DIR_NONE;
         eAnchorX   aimOffsetX    = eAnchorX::middle; // The point from which
         eAnchorY   aimOffsetY    = eAnchorY::middle; // projectiles spawn
+        int        health        = 1;
     public:
         AABB&     getBounds();
         eAnchorX  getAnchorOffsetX() const;
@@ -109,8 +108,9 @@ class GameObject {
         vec2      getAimDirection() const;
         eAnchorX  getAimOffsetX() const;
         eAnchorY  getAimOffsetY() const;
+        int       getHealth() const;
 
-        // Gets the values from the object's bounding box, but adjusted for the
+        // Get the values from the object's bounding box, but adjusted for the
         // anchor alignment
         double getX() const;
         double getY() const;
@@ -133,7 +133,7 @@ class GameObject {
         bool setDirection(vec2 direction);
         void setWeight(double weight);
 
-        // Checks if the object is visible and should be rendered
+        // Check if the object is visible and should be rendered
         bool isVisible() const;
 
         // Move object regardless of collision rules
@@ -154,6 +154,9 @@ class GameObject {
         // Change the object's aimDirection to aim at the given target
         void aimAt(vec2 target);
 
+        // Run whatever derived-class-specific logic is needed for one game tick
+        virtual void tick() = 0;
+
         // Pure virtual destructor to ensure the class is abstract
         virtual ~GameObject() = 0;
 };
@@ -161,10 +164,11 @@ class GameObject {
 // The player character
 class Player : public GameObject {
     public:
-        Player();
         Player(double x, double y);
 
         eObjTypes getObjectType();
+
+        void tick();
 };
 
 // A projectile which may harm entities on contact
@@ -172,15 +176,15 @@ class Player : public GameObject {
 class Projectile : public GameObject {
     private:
         GameObject* owner    = nullptr; // Who this projectile belongs to
-        double      lifespan = 60; // Ideally, should be measured in frames
-    public:
-        Projectile();
-        Projectile(GameObject* owner, double width, double height);
+        int         lifespan = -1; // Max. frames the object can exist for
 
-        // Reduces lifespan by 1 and returns the new value
-        int tickLifespan();
+        Projectile();
+    public:
+        Projectile(GameObject* owner, int lifespan);
 
         eObjTypes getObjectType();
+
+        void tick();
 };
 
 #endif

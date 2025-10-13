@@ -50,6 +50,7 @@ double    GameObject::getWeight() const        { return this->weight; }
 vec2      GameObject::getAimDirection() const  { return this->aimDirection; }
 eAnchorX  GameObject::getAimOffsetX() const    { return this->aimOffsetX; }
 eAnchorY  GameObject::getAimOffsetY() const    { return this->aimOffsetY; }
+int       GameObject::getHealth() const        { return this->health; }
 
 double GameObject::getX() const {
     switch (this->anchorOffsetX) {
@@ -240,7 +241,7 @@ GameObject::~GameObject() {};
 /* -- Player -- */
 
 // Constructors
-Player::Player() {
+Player::Player(double x, double y) {
     this->bounds = AABB(this, {0, 0}, PLR_WIDTH/2, PLR_HEIGHT/2);
     this->anchorOffsetX = eAnchorX::middle;
     this->anchorOffsetY = eAnchorY::bottom;
@@ -250,9 +251,6 @@ Player::Player() {
     this->directionType = eDirTypes::horizontal;
     this->aimOffsetX = eAnchorX::middle;
     this->aimOffsetY = eAnchorY::middle;
-}
-Player::Player(double x, double y)
-    : Player() {
     this->teleport(x, y);
 }
 
@@ -261,6 +259,9 @@ eObjTypes Player::getObjectType() {
     return eObjTypes::player;
 }
 
+// Other methods
+void Player::tick() {};
+
 /* -- Projectile -- */
 
 // Constructors
@@ -268,11 +269,10 @@ Projectile::Projectile() {
     this->directionType = eDirTypes::omni;
     this->weight = 0;
 }
-Projectile::Projectile(GameObject* owner, double width, double height)
+Projectile::Projectile(GameObject* owner, int lifespan)
     : Projectile() {
     this->owner = owner;
-    this->bounds.halfWidth = width/2;
-    this->bounds.halfHeight = height/2;
+    this->lifespan = lifespan;
     
     if (owner != nullptr) {
         this->teleport(owner->getX(), owner->getY());
@@ -285,7 +285,11 @@ eObjTypes Projectile::getObjectType() {
 }
 
 // Other methods
-int Projectile::tickLifespan() {
-    this->lifespan--;
-    return this->lifespan;
+void Projectile::tick() {
+    // Tick down the projectile's lifespan, if it's not negative
+    if (this->lifespan == 0) {
+        this->health = 0;
+    } else if (this->lifespan > 0) {
+        this->lifespan--;
+    }
 }

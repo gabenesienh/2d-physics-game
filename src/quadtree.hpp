@@ -44,7 +44,7 @@ class QuadTree {
 
         // Find the index of whichever quadrant could hold this bounding box
         // Returns -1 on error or if the box can't fully fit into any quadrant
-        // NOTE: will *not* check if the quadrants actually exist! (i.e. if this
+        // PS: will *not* check if the quadrants actually exist! (i.e. if this
         // node has been subdivided)
         int findFittingQuadrant(BoundingBox& box) const;
 
@@ -55,7 +55,7 @@ class QuadTree {
 
         // Recursively look for items (boxes) which intersect the given box's
         // Returns a list of matched items
-        // NOTE: do not specify a value for acc when calling!
+        // PS: do *not* specify a value for acc when calling!
         vector<BoundingBox*> findPossibleCollisions(
             BoundingBox& box,
             vector<BoundingBox*> acc = {}

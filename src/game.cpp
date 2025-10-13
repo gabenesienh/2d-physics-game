@@ -1,5 +1,4 @@
 //TODO: scale trees' bounds with currently loaded level
-//TODO: projectile lifespan
 //TODO: proper ground collision
 
 #include "game.hpp"
@@ -32,6 +31,12 @@ const double GRAV_CAP = 10;
 
 // Loads the specified level from levelsTable
 Level* loadLevel(string levelName);
+
+// Kills the object of the specified index, removing it from gameObjects
+void killGameObject(int index);
+
+// Clears and repopulates gameObjectsTree
+void rebuildGameObjectsTree();
 
 // Sends debug info to standard output, based on the value of debugMode
 void printDebugInfo();
@@ -115,15 +120,17 @@ case GS_STARTED:
 
     //TEMP: Fire projectiles with M1
     if (mouseStates[SDL_BUTTON_LEFT]) {
-        Projectile* proj = new Projectile(player, 8, 8);
+        Projectile* proj = new Projectile(player, 40);
+        proj->setWidth(15);
+        proj->setHeight(15);
         proj->teleport(
             player->getX(),
             player->getBounds().center.y
         );
         proj->setWeight(0);
         proj->thrust(
-            2 * player->getAimDirection().x,
-            2 * player->getAimDirection().y
+            8 * player->getAimDirection().x,
+            8 * player->getAimDirection().y
         );
 
         gameObjects.push_back(proj);
@@ -131,17 +138,16 @@ case GS_STARTED:
 
     /* -- Physics -- */
 
-    // Wipe last frame's collision tree
-    gameObjectsTree->clear();
+    rebuildGameObjectsTree();
 
-    for (GameObject* gobj : gameObjects) {
-        /*
-        if (gobj->getObjectType() == eObjTypes::projectile) {
-            GameObject* proj = gobj; // Alias for convenience
+    // The loop below sometimes requires the GameObject's index in gameObjects,
+    // therefore a forEach can't be used
+    // There's also a chance the object will be killed and removed from
+    // gameObjects, in which case the iterator should not increment
+    int i = 0;
 
-            // Kill projectiles whose lifespan has ended (duh)
-        }
-        */
+    while (i < gameObjects.size()) {
+        GameObject* gobj = gameObjects[i]; // For convenience
 
         // Apply gravity to objects
         gobj->thrust(
@@ -158,10 +164,27 @@ case GS_STARTED:
 
         gobj->tryMove(targetX, targetY);
 
+        // Run the object's specific logic for this tick
+        gobj->tick();
+
+        // Kill object if it's out of health
+        if (gobj->getHealth() <= 0) {
+            killGameObject(i);
+            continue;
+        }
+
+        i++;
+    }
+
+    /* -- Collision -- */
+
+    rebuildGameObjectsTree();
+
+    for (GameObject* gobj : gameObjects) {
         // Find all tiles that could possibly be colliding with this object
         vector<BoundingBox*> possibleCols;
         possibleCols = tilesTree->findPossibleCollisions(gobj->getBounds());
-        
+
         for (BoundingBox* possibleCol : possibleCols) {
             if (gobj->getBounds().intersects(*possibleCol)) {
                 gobj->teleport(
@@ -171,9 +194,6 @@ case GS_STARTED:
                 gobj->setSpeedY(0);
             }
         }
-
-        // Insert object bounding boxes back into the collision tree
-        gameObjectsTree->insert(gobj->getBounds());
     }
 
     /* -- Other -- */
@@ -212,6 +232,19 @@ Level* loadLevel(string levelName) {
         }
 
         return nullptr;
+    }
+}
+
+void killGameObject(int index) {
+    delete(gameObjects[index]);
+    gameObjects.erase(gameObjects.begin() + index);
+}
+
+void rebuildGameObjectsTree() {
+    gameObjectsTree->clear();
+
+    for (GameObject* gobj : gameObjects) {
+        gameObjectsTree->insert(gobj->getBounds());
     }
 }
 
