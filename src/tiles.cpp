@@ -2,26 +2,27 @@
 
 #include "util.hpp"
 
-/* -- TileBB -- */
+/* -- TileAABB -- */
 
 // Constructors
-TileBB::TileBB(int gridX, int gridY)
-    : gridX(gridX),
+TileAABB::TileAABB(int typeId, int gridX, int gridY)
+    : typeId(typeId),
+      gridX(gridX),
       gridY(gridY) {}
 
 // Getters
-double TileBB::getTopY() const {
+double TileAABB::getTopY() const {
     return this->gridY*TILEGRID_CELL_SIZE;
 }
-double TileBB::getBottomY() const {
-    int gridHeight = tileTypesTable.at(this->parent->getTypeId()).gridHeight;
+double TileAABB::getBottomY() const {
+    int gridHeight = tileTypesTable.at(this->typeId).gridHeight;
     return (this->gridY + gridHeight)*TILEGRID_CELL_SIZE;
 }
-double TileBB::getLeftX() const {
+double TileAABB::getLeftX() const {
     return this->gridX*TILEGRID_CELL_SIZE;
 }
-double TileBB::getRightX() const {
-    int gridWidth = tileTypesTable.at(this->parent->getTypeId()).gridWidth;
+double TileAABB::getRightX() const {
+    int gridWidth = tileTypesTable.at(this->typeId).gridWidth;
     return (this->gridX + gridWidth)*TILEGRID_CELL_SIZE;
 }
 
@@ -36,12 +37,10 @@ TileType::TileType(int gridWidth, int gridHeight)
 
 // Constructors
 Tile::Tile(int typeId, int gridX, int gridY)
-    : typeId(typeId),
-      bounds(TileBB(gridX, gridY)) {}
+    : bounds(TileAABB(typeId, gridX, gridY)) {}
 
 // Getters
-int     Tile::getTypeId() const { return this->typeId; }
-TileBB& Tile::getBounds()       { return this->bounds; }
+TileAABB& Tile::getBounds()       { return this->bounds; }
 
 // Other methods
 int Tile::getX() const {
@@ -51,10 +50,10 @@ int Tile::getY() const {
     return this->bounds.gridY*TILEGRID_CELL_SIZE;
 }
 int Tile::getWidth() const {
-    return tileTypesTable.at(this->typeId).gridWidth*TILEGRID_CELL_SIZE;
+    return tileTypesTable.at(this->bounds.typeId).gridWidth*TILEGRID_CELL_SIZE;
 }
 int Tile::getHeight() const {
-    return tileTypesTable.at(this->typeId).gridHeight*TILEGRID_CELL_SIZE;
+    return tileTypesTable.at(this->bounds.typeId).gridHeight*TILEGRID_CELL_SIZE;
 }
 
 // View the header file for info on constructor structures

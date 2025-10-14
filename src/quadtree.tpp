@@ -10,18 +10,24 @@ using std::vector;
 
 /* -- QuadTree -- */
 
+
 // Constructors
-QuadTree::QuadTree(int level, AABB bounds)
+template<typename T>
+QuadTree<T>::QuadTree(int level, AABB bounds)
     : level(level),
       bounds(bounds) {}
 
 // Getters
-AABB&                QuadTree::getBounds()          { return this->bounds; }
-vector<BoundingBox*> QuadTree::getItems() const     { return this->items; }
-array<QuadTree*, 4>  QuadTree::getQuadrants() const { return this->quads; }
+template<typename T>
+AABB&                  QuadTree<T>::getBounds()          { return this->bounds; }
+template<typename T>
+vector<T*>             QuadTree<T>::getItems() const     { return this->items; }
+template<typename T>
+array<QuadTree<T>*, 4> QuadTree<T>::getQuadrants() const { return this->quads; }
 
 // Other methods
-void QuadTree::clear() {
+template<typename T>
+void QuadTree<T>::clear() {
     // Delete the item pointers in this node
     // Will NOT free the items that the pointers point to
     this->items.clear();
@@ -37,7 +43,8 @@ void QuadTree::clear() {
     }
 }
 
-void QuadTree::subdivide() {
+template<typename T>
+void QuadTree<T>::subdivide() {
     vec2 nwCenter = {
         this->bounds.center.x - this->bounds.halfWidth/2,
         this->bounds.center.y - this->bounds.halfHeight/2
@@ -57,23 +64,24 @@ void QuadTree::subdivide() {
 
     this->quads[0] = new QuadTree(
         this->level + 1,
-        AABB(nullptr, nwCenter, this->bounds.halfWidth/2, this->bounds.halfHeight/2)
+        AABB(nwCenter, this->bounds.halfWidth/2, this->bounds.halfHeight/2)
     );
     this->quads[1] = new QuadTree(
         this->level + 1,
-        AABB(nullptr, neCenter, this->bounds.halfWidth/2, this->bounds.halfHeight/2)
+        AABB(neCenter, this->bounds.halfWidth/2, this->bounds.halfHeight/2)
     );
     this->quads[2] = new QuadTree(
         this->level + 1,
-        AABB(nullptr, swCenter, this->bounds.halfWidth/2, this->bounds.halfHeight/2)
+        AABB(swCenter, this->bounds.halfWidth/2, this->bounds.halfHeight/2)
     );
     this->quads[3] = new QuadTree(
         this->level + 1,
-        AABB(nullptr, seCenter, this->bounds.halfWidth/2, this->bounds.halfHeight/2)
+        AABB(seCenter, this->bounds.halfWidth/2, this->bounds.halfHeight/2)
     );
 }
 
-int QuadTree::findFittingQuadrant(BoundingBox& box) const {
+template<typename T>
+int QuadTree<T>::findFittingQuadrant(AABBCommon& box) const {
     bool fitsNorth = false;
     bool fitsSouth = false;
     bool fitsWest = false;
@@ -116,27 +124,28 @@ int QuadTree::findFittingQuadrant(BoundingBox& box) const {
     return -1;
 }
 
-void QuadTree::insert(BoundingBox& box) {
-    // Ignore this box if it's outside the bounds of the root node of the tree
+template<typename T>
+void QuadTree<T>::insert(T* item) {
+    // Ignore this item if it's outside the bounds of the root node of the tree
     if (this->level == 0
-    && !box.intersects(this->bounds)) {
+    && !item->getBounds().intersects(this->bounds)) {
         return;
     }
 
     // Does this node already have quadrants generated?
     if (this->quads[0] != nullptr) {
-        int fitsIndex = this->findFittingQuadrant(box);
+        int fitsIndex = this->findFittingQuadrant(item->getBounds());
 
-        // Insert this box into a quadrant instead, if there's one that fits it
+        // Insert this item into a quadrant instead, if there's one that fits it
         if (fitsIndex != -1) {
-            this->quads[fitsIndex]->insert(box);
+            this->quads[fitsIndex]->insert(item);
             return;
         }
     }
 
     // No quads generated or it doesn't fit into any of them, so insert it into
     // this node
-    this->items.push_back(&box);
+    this->items.push_back(item);
 
     // Split this node if it's now above capacity
     if (this->items.size() > QuadTree::BUCKET_CAPACITY
@@ -156,10 +165,10 @@ void QuadTree::insert(BoundingBox& box) {
         int i = 0;
 
         while (i < this->items.size()) {
-            int fitsIndex = this->findFittingQuadrant(*(this->items[i]));
+            int fitsIndex = this->findFittingQuadrant(this->items[i]->getBounds());
 
             if (fitsIndex != -1) {
-                this->quads[fitsIndex]->insert(*(this->items[i]));
+                this->quads[fitsIndex]->insert(this->items[i]);
                 this->items.erase(this->items.begin() + i);
                 continue;
             }
@@ -168,9 +177,11 @@ void QuadTree::insert(BoundingBox& box) {
         }
     }
 }
-vector<BoundingBox*> QuadTree::findPossibleCollisions(
-    BoundingBox& box,
-    vector<BoundingBox*> acc
+
+template<typename T>
+vector<T*> QuadTree<T>::findPossibleCollisions(
+    AABBCommon& box,
+    vector<T*> acc
 ) const {
     // acc is an accumulator with all items that could collide with this box
 
@@ -193,8 +204,8 @@ vector<BoundingBox*> QuadTree::findPossibleCollisions(
     }
 
     // Consider all items from this node
-    for (BoundingBox* box : this->items) {
-        acc.push_back(box);
+    for (T* item : this->items) {
+        acc.push_back(item);
     }
 
     return acc;

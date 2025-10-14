@@ -8,6 +8,7 @@
 #include "levels.hpp"
 #include "objects.hpp"
 #include "quadtree.hpp"
+#include "tiles.hpp"
 
 using std::vector;
 
@@ -41,11 +42,11 @@ extern vector<GameObject*> gameObjects;
 
 // Tree structure containing pointers to the bounding boxes of all objects
 // currently in-game
-extern QuadTree* gameObjectsTree;
+extern QuadTree<GameObject>* gameObjectsTree;
 
 // Tree structure containing pointers to the bounding boxes of all level tiles
 // currently loaded
-extern QuadTree* tilesTree;
+extern QuadTree<Tile>* tilesTree;
 
 // The player object in gameObjects
 extern Player* player;

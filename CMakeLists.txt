@@ -13,7 +13,6 @@ add_executable(${PROJECT_NAME}
 	src/main.cpp
 	src/objects.cpp
 	src/preferences.cpp
-	src/quadtree.cpp
 	src/tiles.cpp
 	src/util.cpp
 )

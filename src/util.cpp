@@ -33,9 +33,9 @@ vec2 vec2::normalized() {
     };
 }
 
-/* -- BoundingBox class -- */
+/* -- AABBCommon class -- */
 
-bool BoundingBox::intersects(BoundingBox& other) const {
+bool AABBCommon::intersects(AABBCommon& other) const {
     bool intersectsY = false;
     bool intersectsX = false;
 
@@ -67,7 +67,7 @@ bool BoundingBox::intersects(BoundingBox& other) const {
     return true;
 }
 
-BoundingBox::~BoundingBox() {};
+AABBCommon::~AABBCommon() {};
 
 /* -- Utility methods -- */
 

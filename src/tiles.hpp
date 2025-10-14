@@ -1,3 +1,5 @@
+//TODO: merge TileAABB into Tile...?
+
 // Definitions for classes related to level tiles, and the available tile types
 
 #ifndef TILES_HPP
@@ -15,18 +17,14 @@ const int TILEGRID_CELL_SIZE = 32;
 
 class Tile;
 
-/* Tile bounding box
- * "grid" attributes are measured in grid cells
- *
- * Care must be taken with the "parent" attribute, since it can be invalidated
- * if the vector (or other structure) containing the parent tile gets resized
- */
-struct TileBB : public BoundingBox {
-    Tile* parent = nullptr;
-    int   gridX;
-    int   gridY;
+// Tile bounding box
+// "grid" attributes are measured in grid cells
+struct TileAABB : public AABBCommon {
+    int typeId; // References tileTypesTable
+    int gridX;
+    int gridY;
 
-    TileBB(int gridX, int gridY);
+    TileAABB(int typeId, int gridX, int gridY);
 
     double getTopY() const;
     double getBottomY() const;
@@ -47,13 +45,11 @@ struct TileType {
 // Represents a single tile in a level
 class Tile {
     private:
-        int    typeId; // References tileTypesTable
-        TileBB bounds; // Generated when constructing, based on typeId
+        TileAABB bounds; // Generated when constructing, based on typeId given
     public:
         Tile(int typeId, int gridX, int gridY);
         
-        int     getTypeId() const;
-        TileBB& getBounds();
+        TileAABB& getBounds();
 
         // The tile's bounds' X/Y, multiplied by the grid's cell size
         int getX() const;

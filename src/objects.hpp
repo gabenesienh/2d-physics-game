@@ -62,13 +62,12 @@ enum class eObjTypes {
 class GameObject;
 
 // Axis-aligned bounding box
-struct AABB : public BoundingBox {
-    const GameObject* parent = nullptr; // Who this AABB belongs to, if anyone
+struct AABB : public AABBCommon {
     vec2              center;
     double            halfWidth;
     double            halfHeight;
 
-    AABB(GameObject* parent, vec2 center, double halfWidth, double halfHeight);
+    AABB(vec2 center, double halfWidth, double halfHeight);
 
     double getTopY() const;
     double getBottomY() const;
@@ -79,7 +78,7 @@ struct AABB : public BoundingBox {
 // Abstract class for specialized objects to implement
 class GameObject {
     protected:
-        AABB       bounds        = AABB(this, {0, 0}, 8, 8);
+        AABB       bounds        = AABB({0, 0}, 8, 8);
         eAnchorX   anchorOffsetX = eAnchorX::middle;
         eAnchorY   anchorOffsetY = eAnchorY::middle;
         double     speedX        = 0;

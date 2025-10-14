@@ -14,8 +14,12 @@
 
 using std::abs, std::max;
 
+// Set colors if they're not already set
 void setColors();
-void drawTree(QuadTree* tree, Uint32 color); // Recursively draw a QuadTree
+
+// Recursively draw a QuadTree
+template <typename T>
+void drawTree(QuadTree<T>* tree, Uint32 color);
 
 // Used for rendering game objects as solid rectangles in debug mode
 // X and Y refer to screen position rather than game position
@@ -169,7 +173,8 @@ void drawRectangle(SDL_Surface* surface, SDL_Rect& rendererRect, Uint32 color, i
     drawLine(surface, rendererRect, color, x0, y1, x0, y0);
 }
 
-void drawTree(QuadTree* tree, Uint32 color) {
+template <typename T>
+void drawTree(QuadTree<T>* tree, Uint32 color) {
     rendererRect.w = 1;
     rendererRect.h = 1;
 
@@ -184,7 +189,7 @@ void drawTree(QuadTree* tree, Uint32 color) {
     );
 
     if (tree->getQuadrants()[0] != nullptr) {
-        for (QuadTree* quad : tree->getQuadrants()) {
+        for (QuadTree<T>* quad : tree->getQuadrants()) {
             drawTree(quad, color);
         }
     }

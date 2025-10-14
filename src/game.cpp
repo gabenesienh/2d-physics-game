@@ -1,5 +1,6 @@
 //TODO: scale trees' bounds with currently loaded level
 //TODO: proper ground collision
+//TODO: level editor
 
 #include "game.hpp"
 
@@ -51,20 +52,18 @@ Level*  loadedLevel; // Receives a value upon calling loadLevel
 
 vector<GameObject*> gameObjects = {};
 
-QuadTree* gameObjectsTree = new QuadTree(
+QuadTree<GameObject>* gameObjectsTree = new QuadTree<GameObject>(
     0,
     AABB(
-        nullptr,
         {WINDOW_WIDTH/2, WINDOW_HEIGHT/2},
         (WINDOW_WIDTH/2) - 2,
         (WINDOW_HEIGHT/2) - 2
     )
 );
 
-QuadTree* tilesTree = new QuadTree(
+QuadTree<Tile>* tilesTree = new QuadTree<Tile>(
     0,
     AABB(
-        nullptr,
         {WINDOW_WIDTH/2, WINDOW_HEIGHT/2},
         (WINDOW_WIDTH/2) - 2,
         (WINDOW_HEIGHT/2) - 2
@@ -80,7 +79,7 @@ case GS_LAUNCHED:
     loadedLevel = loadLevel("test");
 
     for (Tile& tile : loadedLevel->getTiles()) {
-        tilesTree->insert(tile.getBounds());
+        tilesTree->insert(&tile);
     }
 
     // Spawn player
@@ -182,11 +181,11 @@ case GS_STARTED:
 
     for (GameObject* gobj : gameObjects) {
         // Find all tiles that could possibly be colliding with this object
-        vector<BoundingBox*> possibleCols;
+        vector<Tile*> possibleCols;
         possibleCols = tilesTree->findPossibleCollisions(gobj->getBounds());
 
-        for (BoundingBox* possibleCol : possibleCols) {
-            if (gobj->getBounds().intersects(*possibleCol)) {
+        for (Tile* possibleCol : possibleCols) {
+            if (gobj->getBounds().intersects(possibleCol->getBounds())) {
                 gobj->teleport(
                     gobj->getX(),
                     320
@@ -244,7 +243,7 @@ void rebuildGameObjectsTree() {
     gameObjectsTree->clear();
 
     for (GameObject* gobj : gameObjects) {
-        gameObjectsTree->insert(gobj->getBounds());
+        gameObjectsTree->insert(gobj);
     }
 }
 

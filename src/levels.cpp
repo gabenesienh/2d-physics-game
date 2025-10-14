@@ -16,10 +16,6 @@ using std::vector;
 Level::Level(string displayName, vector<Tile> tiles)
     : displayName(displayName),
       tiles(tiles) {
-    // Set parent attribute for each tile's bounding box
-    for (Tile& tile : this->tiles) {
-        tile.getBounds().parent = &tile;
-    }
 }
 
 // Getters

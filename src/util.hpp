@@ -24,17 +24,17 @@ struct vec2 {
     vec2 normalized();
 };
 
-// Generic bounding box
-struct BoundingBox {
+// Properties common to derived AABB types
+struct AABBCommon {
     virtual double getTopY() const = 0;
     virtual double getBottomY() const = 0;
     virtual double getLeftX() const = 0;
     virtual double getRightX() const = 0;
 
     // Returns true if this box intersects the other
-    bool intersects(BoundingBox& other) const;
+    bool intersects(AABBCommon& other) const;
 
-    virtual ~BoundingBox() = 0;
+    virtual ~AABBCommon() = 0;
 };
 
 // Initialize SDL
