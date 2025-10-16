@@ -17,6 +17,16 @@ const int TILEGRID_CELL_SIZE = 32;
 
 class Tile;
 
+// For use with Tile class
+// Defines common properties for all instances of Tile with the same TileType
+// "grid" attributes are measured in grid cells
+struct TileType {
+    const int gridWidth;
+    const int gridHeight;
+
+    TileType(int gridWidth, int gridHeight);
+};
+
 // Tile bounding box
 // "grid" attributes are measured in grid cells
 struct TileAABB : public AABBCommon {
@@ -30,16 +40,6 @@ struct TileAABB : public AABBCommon {
     double getBottomY() const;
     double getLeftX() const;
     double getRightX() const;
-};
-
-// For use with Tile class
-// Defines common properties for all instances of Tile with the same TileType
-// "grid" attributes are measured in grid cells
-struct TileType {
-    const int gridWidth;
-    const int gridHeight;
-
-    TileType(int gridWidth, int gridHeight);
 };
 
 // Represents a single tile in a level

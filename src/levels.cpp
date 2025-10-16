@@ -28,6 +28,41 @@ const unordered_map<string, Level> levelsTable = {
         {
             Tile(
                 1,
+                6,
+                13
+            ),
+            Tile(
+                1,
+                7,
+                13
+            ),
+            Tile(
+                1,
+                8,
+                13
+            ),
+            Tile(
+                1,
+                9,
+                13
+            ),
+            Tile(
+                1,
+                10,
+                13
+            ),
+            Tile(
+                1,
+                10,
+                12
+            ),
+            Tile(
+                1,
+                10,
+                11
+            ),
+            Tile(
+                1,
                 10,
                 10
             ),
@@ -80,6 +115,41 @@ const unordered_map<string, Level> levelsTable = {
                 1,
                 20,
                 10
+            ),
+            Tile(
+                1,
+                20,
+                11
+            ),
+            Tile(
+                1,
+                20,
+                12
+            ),
+            Tile(
+                1,
+                20,
+                13
+            ),
+            Tile(
+                1,
+                21,
+                13
+            ),
+            Tile(
+                1,
+                22,
+                13
+            ),
+            Tile(
+                1,
+                23,
+                13
+            ),
+            Tile(
+                1,
+                24,
+                13
             )
         }
     )}

@@ -1,6 +1,7 @@
 //TODO: scale trees' bounds with currently loaded level
 //TODO: proper ground collision
 //TODO: level editor
+//TODO: handle tile collisions in different ways for each side
 
 #include "game.hpp"
 
@@ -19,16 +20,16 @@
 #include "tiles.hpp"
 #include "util.hpp"
 
-using std::min;
-using std::cin, std::cout, std::endl;
+using std::abs, std::min;
+using std::cout, std::endl;
 using std::setw;
 using std::string;
 using std::vector;
 
 // Usage: speedY += speedY*GRAV_MULT + GRAV_ADD
-const double GRAV_ADD = 0.15;
-const double GRAV_MULT = 0.05;
-const double GRAV_CAP = 10;
+const double GRAV_ADD = 0.3;
+const double GRAV_MULT = 0.03;
+const double GRAV_CAP = 15;
 
 // Loads the specified level from levelsTable
 Level* loadLevel(string levelName);
@@ -117,19 +118,18 @@ case GS_STARTED:
         player->setDirection(DIR_RIGHT);
     }
 
-    //TEMP: Fire projectiles with M1
-    if (mouseStates[SDL_BUTTON_LEFT]) {
-        Projectile* proj = new Projectile(player, 40);
-        proj->setWidth(15);
-        proj->setHeight(15);
+    //TEMP: fire projectiles with M1
+    if (mouseStates[SDL_BUTTON_LEFT]
+    && !mouseStatesTap[SDL_BUTTON_LEFT]) {
+        Projectile* proj = new Projectile(player, 90, 15, 15);
         proj->teleport(
             player->getX(),
             player->getBounds().center.y
         );
-        proj->setWeight(0);
+        proj->setWeight(0.85);
         proj->thrust(
-            8 * player->getAimDirection().x,
-            8 * player->getAimDirection().y
+            14 * player->getAimDirection().x,
+            14 * player->getAimDirection().y
         );
 
         gameObjects.push_back(proj);
@@ -140,7 +140,7 @@ case GS_STARTED:
     rebuildGameObjectsTree();
 
     // The loop below sometimes requires the GameObject's index in gameObjects,
-    // therefore a forEach can't be used
+    // so a forEach can't be used
     // There's also a chance the object will be killed and removed from
     // gameObjects, in which case the iterator should not increment
     int i = 0;
@@ -149,13 +149,15 @@ case GS_STARTED:
         GameObject* gobj = gameObjects[i]; // For convenience
 
         // Apply gravity to objects
+        auto newSpeedY = (abs(gobj->getSpeedY())*GRAV_MULT + GRAV_ADD);
+
         gobj->thrust(
             0,
-            (gobj->getSpeedY()*GRAV_MULT + GRAV_ADD)*gobj->getWeight()
+            newSpeedY*gobj->getWeight()
         );
 
         // Cap falling speed
-        gobj->setSpeedY(min(gobj->getSpeedY(), GRAV_CAP));
+        gobj->setSpeedY(min(gobj->getSpeedY(), GRAV_CAP*gobj->getWeight()));
 
         // Displace game objects based on their speed
         double targetX = gobj->getX() + gobj->getSpeedX();
@@ -180,18 +182,30 @@ case GS_STARTED:
     rebuildGameObjectsTree();
 
     for (GameObject* gobj : gameObjects) {
-        // Find all tiles that could possibly be colliding with this object
-        vector<Tile*> possibleCols;
-        possibleCols = tilesTree->findPossibleCollisions(gobj->getBounds());
+        while (true) {
+            // Whether or not the gobj collided with something
+            bool collision = false;
 
-        for (Tile* possibleCol : possibleCols) {
-            if (gobj->getBounds().intersects(possibleCol->getBounds())) {
-                gobj->teleport(
-                    gobj->getX(),
-                    320
-                );
-                gobj->setSpeedY(0);
+            // Find all tiles that could possibly be colliding with this object
+            vector<Tile*> possibleCols;
+            possibleCols = tilesTree->findPossibleCollisions(gobj->getBounds());
+
+            for (Tile* possibleCol : possibleCols) {
+                if (gobj->getBounds().intersects(possibleCol->getBounds())) {
+                    gobj->onCollideTile(possibleCol);
+                    collision = true;
+                }
             }
+
+            if (collision) {
+                // The gobj may have changed position, so rebuild the tree
+                rebuildGameObjectsTree();
+
+                // Re-do all the collision checks
+                continue;
+            }
+
+            break;
         }
     }
 

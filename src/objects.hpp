@@ -7,6 +7,7 @@
 
 #include <string>
 
+#include "tiles.hpp"
 #include "util.hpp"
 
 using std::string;
@@ -93,6 +94,7 @@ class GameObject {
         eAnchorX   aimOffsetX    = eAnchorX::middle; // The point from which
         eAnchorY   aimOffsetY    = eAnchorY::middle; // projectiles spawn
         int        health        = 1;
+        bool       grounded      = false;
     public:
         AABB&     getBounds();
         eAnchorX  getAnchorOffsetX() const;
@@ -153,10 +155,13 @@ class GameObject {
         // Change the object's aimDirection to aim at the given target
         void aimAt(vec2 target);
 
-        // Run whatever derived-class-specific logic is needed for one game tick
-        virtual void tick() = 0;
+        // Run the object's per-tick logic
+        virtual void tick() {};
 
-        // Pure virtual destructor to ensure the class is abstract
+        // Run the object's tile collision logic
+        virtual void onCollideTile(Tile* tile);
+
+        // Pure virtual destructor to ensure this class is abstract
         virtual ~GameObject() = 0;
 };
 
@@ -166,20 +171,20 @@ class Player : public GameObject {
         Player(double x, double y);
 
         eObjTypes getObjectType();
-
-        void tick();
 };
 
 // A projectile which may harm entities on contact
 // If owner is nullptr, it will be considered an environment projectile
 class Projectile : public GameObject {
     private:
-        GameObject* owner    = nullptr; // Who this projectile belongs to
-        int         lifespan = -1; // Max. frames the object can exist for
+        GameObject* owner        = nullptr; // Who this projectile belongs to
+        int         lifespan     = -1; // Max. frames the object can exist for
+        double      frictionAdd  = 0.15;
+        double      frictionMult = 0.025; // Range: 0-1
 
         Projectile();
     public:
-        Projectile(GameObject* owner, int lifespan);
+        Projectile(GameObject* owner, int lifespan, double width, double height);
 
         eObjTypes getObjectType();
 

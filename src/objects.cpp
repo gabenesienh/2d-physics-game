@@ -8,9 +8,10 @@
 #include <string>
 #include <stdexcept>
 
+#include "tiles.hpp"
 #include "util.hpp"
 
-using std::abs;
+using std::abs, std::min;
 using std::string;
 
 /* -- AABB -- */
@@ -235,6 +236,28 @@ void GameObject::aimAt(vec2 target) {
     this->aimDirection = this->aimDirection.normalized();
 }
 
+void GameObject::onCollideTile(Tile* tile) {
+    //TEMP: teleport the object to the tile's top, regardless of collision angle
+    double destY = tile->getBounds().getTopY();
+
+    switch (this->anchorOffsetY) {
+        case eAnchorY::top:
+            destY -= this->bounds.halfHeight*2;
+            break;
+        case eAnchorY::middle:
+            destY -= this->bounds.halfHeight;
+            break;
+        case eAnchorY::bottom:
+            break;
+    }
+
+    this->teleport(this->getX(), destY);
+    this->speedY = 0;
+
+    //TEMP: set grounded to true regardless of collision angle
+    this->grounded = true;
+}
+
 GameObject::~GameObject() {};
 
 /* -- Player -- */
@@ -258,9 +281,6 @@ eObjTypes Player::getObjectType() {
     return eObjTypes::player;
 }
 
-// Other methods
-void Player::tick() {};
-
 /* -- Projectile -- */
 
 // Constructors
@@ -268,10 +288,12 @@ Projectile::Projectile() {
     this->directionType = eDirTypes::omni;
     this->weight = 0;
 }
-Projectile::Projectile(GameObject* owner, int lifespan)
+Projectile::Projectile(GameObject* owner, int lifespan, double width, double height)
     : Projectile() {
     this->owner = owner;
     this->lifespan = lifespan;
+    this->bounds.halfWidth = width/2;
+    this->bounds.halfHeight = height/2;
     
     if (owner != nullptr) {
         this->teleport(owner->getX(), owner->getY());
@@ -290,5 +312,22 @@ void Projectile::tick() {
         this->health = 0;
     } else if (this->lifespan > 0) {
         this->lifespan--;
+    }
+
+    if (this->grounded) {
+        if (this->speedX != 0) {
+            /* -- Friction -- */
+
+            // How much speed should be lost due to friction
+            double spdReduction = abs(this->speedX)*this->frictionMult + this->frictionAdd;
+    
+            // Directional factor to apply the speed loss to
+            int dir = (this->speedX > 0) ? 1 : -1;
+    
+            // Apply and cap the speed loss so the object isn't thrust backwards
+            this->speedX -= min(spdReduction, abs(this->speedX))*dir;
+        }
+
+        this->grounded = false;
     }
 }
