@@ -56,8 +56,9 @@ class Tile {
         int getY() const;
 
         // The tile's type's width/height, multiplied by the grid's cell size
-        int getWidth() const;
-        int getHeight() const;
+        // Typed double for compatibility with other dimension getter methods
+        double getWidth() const;
+        double getHeight() const;
 };
 
 // All TileType definitions go here

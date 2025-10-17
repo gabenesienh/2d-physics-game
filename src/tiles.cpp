@@ -49,10 +49,10 @@ int Tile::getX() const {
 int Tile::getY() const {
     return this->bounds.gridY*TILEGRID_CELL_SIZE;
 }
-int Tile::getWidth() const {
+double Tile::getWidth() const {
     return tileTypesTable.at(this->bounds.typeId).gridWidth*TILEGRID_CELL_SIZE;
 }
-int Tile::getHeight() const {
+double Tile::getHeight() const {
     return tileTypesTable.at(this->bounds.typeId).gridHeight*TILEGRID_CELL_SIZE;
 }
 

@@ -133,23 +133,28 @@ const unordered_map<string, Level> levelsTable = {
             ),
             Tile(
                 1,
+                20,
+                14
+            ),
+            Tile(
+                1,
                 21,
-                13
+                14
             ),
             Tile(
                 1,
                 22,
-                13
+                14
             ),
             Tile(
                 1,
                 23,
-                13
+                14
             ),
             Tile(
                 1,
                 24,
-                13
+                14
             )
         }
     )}

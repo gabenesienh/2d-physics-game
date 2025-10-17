@@ -51,6 +51,7 @@ vec2      GameObject::getAimDirection() const  { return this->aimDirection; }
 eAnchorX  GameObject::getAimOffsetX() const    { return this->aimOffsetX; }
 eAnchorY  GameObject::getAimOffsetY() const    { return this->aimOffsetY; }
 int       GameObject::getHealth() const        { return this->health; }
+bool      GameObject::isGrounded() const       { return this->grounded; }
 
 double GameObject::getX() const {
     switch (this->anchorOffsetX) {
@@ -236,7 +237,38 @@ void GameObject::aimAt(vec2 target) {
     this->aimDirection = this->aimDirection.normalized();
 }
 
-void GameObject::onCollideTile(Tile* tile) {
+void GameObject::tick() {
+    this->grounded = false;
+}
+
+void GameObject::onCollideTile(Tile* tile, vec2 overlap) {
+    double destX = this->getX();
+    double destY = this->getY();
+
+    if (overlap.x > overlap.y) {
+        /* -- Vertical collision -- */
+
+        if (overlap.y > 0) {
+            /* -- Touched ground -- */
+
+            this->grounded = true;
+            this->speedY = 0;
+
+            destY = tile->getBounds().getTopY();
+        } else {
+            /* -- Touched ceiling -- */
+            this->speedY = 0;
+
+            destY = tile->getBounds().getBottomY() + this->bounds.halfHeight*2;
+        }
+    } else {
+        /* -- Horizontal collision -- */
+        destX = tile->getBounds().getRightX() + this->bounds.halfWidth;
+    }
+
+    this->teleport(destX, destY);
+
+    /*
     //TEMP: teleport the object to the tile's top, regardless of collision angle
     double destY = tile->getBounds().getTopY();
 
@@ -256,6 +288,7 @@ void GameObject::onCollideTile(Tile* tile) {
 
     //TEMP: set grounded to true regardless of collision angle
     this->grounded = true;
+    */
 }
 
 GameObject::~GameObject() {};

@@ -135,6 +135,12 @@ case GS_STARTED:
         gameObjects.push_back(proj);
     }
 
+    //TEMP: space jump
+    if (player->isGrounded()
+    &&  keyStates[SDL_SCANCODE_SPACE]) {
+        player->setSpeedY(-8);
+    }
+
     /* -- Physics -- */
 
     rebuildGameObjectsTree();
@@ -191,8 +197,16 @@ case GS_STARTED:
             possibleCols = tilesTree->findPossibleCollisions(gobj->getBounds());
 
             for (Tile* possibleCol : possibleCols) {
-                if (gobj->getBounds().intersects(possibleCol->getBounds())) {
-                    gobj->onCollideTile(possibleCol);
+                vec2 overlap = gobj->getBounds().intersects(possibleCol->getBounds());
+
+                overlap.x = min(overlap.x, gobj->getWidth());
+                overlap.x = min(overlap.x, possibleCol->getWidth());
+
+                overlap.y = min(overlap.y, gobj->getHeight());
+                overlap.y = min(overlap.y, possibleCol->getHeight());
+
+                if (overlap.x != 0) {
+                    gobj->onCollideTile(possibleCol, overlap);
                     collision = true;
                 }
             }

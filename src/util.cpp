@@ -35,36 +35,36 @@ vec2 vec2::normalized() {
 
 /* -- AABBCommon class -- */
 
-bool AABBCommon::intersects(AABBCommon& other) const {
-    bool intersectsY = false;
-    bool intersectsX = false;
+vec2 AABBCommon::intersects(AABBCommon& other) const {
+    double intersectsY = 0;
+    double intersectsX = 0;
 
     if (this->getBottomY() > other.getTopY()
     &&  this->getTopY()    < other.getBottomY()) {
         // This box might be intersecting the other from the top side
-        intersectsY = true;
+        intersectsY = this->getBottomY() - other.getTopY();
     } else if (this->getTopY()    < other.getBottomY()
       &&       this->getBottomY() > other.getTopY()   ) {
         // This box might be intersecting the other from the bottom side
-        intersectsY = true;
+        intersectsY = this->getTopY() - other.getBottomY();
     }
 
     // These boxes' top and bottom sides can't collide, so they can't intersect
-    if (!intersectsY) return false;
+    if (intersectsY == 0) return {0, 0};
 
     if (this->getRightX() > other.getLeftX()
     &&  this->getLeftX()  < other.getRightX()) {
         // This box might be intersecting the other from the left side
-        intersectsX = true;
+        intersectsX = this->getRightX() - other.getLeftX();
     } else if (this->getLeftX()  < other.getRightX()
       &&       this->getRightX() > other.getLeftX() ) {
         // This box might be intersecting the other from the right side
-        intersectsX = true;
+        intersectsX = this->getLeftX() - other.getRightX();
     }
 
-    if (!intersectsX) return false;
+    if (intersectsX == 0) return {0, 0};
 
-    return true;
+    return {intersectsX, intersectsY};
 }
 
 AABBCommon::~AABBCommon() {};

@@ -31,8 +31,16 @@ struct AABBCommon {
     virtual double getLeftX() const = 0;
     virtual double getRightX() const = 0;
 
-    // Returns true if this box intersects the other
-    bool intersects(AABBCommon& other) const;
+    /*
+     * Returns a vector of how much this box intersects the other. Values are
+     * signed to represent direction in each axis. If not intersecting,
+     * returns {0, 0}.
+     *
+     * To avoid virtual calls, this method does NOT consider the boxes' widths
+     * and heights for the return value. This should be accounted for using
+     * the derived classes' specific methods.
+     */
+    vec2 intersects(AABBCommon& other) const;
 
     virtual ~AABBCommon() = 0;
 };

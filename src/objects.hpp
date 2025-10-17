@@ -1,4 +1,5 @@
 //TODO: refactor GameObject::getScreen* methods into helper functions
+//TODO: remove anchors and merge AABB classes...?
 
 // Game object class definitions and related logic
 
@@ -110,6 +111,7 @@ class GameObject {
         eAnchorX  getAimOffsetX() const;
         eAnchorY  getAimOffsetY() const;
         int       getHealth() const;
+        bool      isGrounded() const;
 
         // Get the values from the object's bounding box, but adjusted for the
         // anchor alignment
@@ -156,10 +158,12 @@ class GameObject {
         void aimAt(vec2 target);
 
         // Run the object's per-tick logic
-        virtual void tick() {};
+        virtual void tick();
 
         // Run the object's tile collision logic
-        virtual void onCollideTile(Tile* tile);
+        // overlap parameter should be the return from AABBCommon::intersects,
+        // since these methods should be used together
+        virtual void onCollideTile(Tile* tile, vec2 overlap);
 
         // Pure virtual destructor to ensure this class is abstract
         virtual ~GameObject() = 0;

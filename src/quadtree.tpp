@@ -128,7 +128,7 @@ template<typename T>
 void QuadTree<T>::insert(T* item) {
     // Ignore this item if it's outside the bounds of the root node of the tree
     if (this->level == 0
-    && !item->getBounds().intersects(this->bounds)) {
+    &&  item->getBounds().intersects(this->bounds).x == 0) {
         return;
     }
 
