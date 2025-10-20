@@ -170,7 +170,7 @@ class Player : public GameObject {
     public:
         Player(double x, double y);
 
-        eObjTypes getObjectType();
+        eObjTypes getObjectType() override;
 };
 
 // A projectile which may harm entities on contact
@@ -186,9 +186,9 @@ class Projectile : public GameObject {
     public:
         Projectile(GameObject* owner, int lifespan, double width, double height);
 
-        eObjTypes getObjectType();
+        eObjTypes getObjectType() override;
 
-        void tick();
+        void tick() override;
 };
 
 #endif

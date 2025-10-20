@@ -28,7 +28,7 @@ const int DEBUG_SHOW_QUADS       = 0x10000;
 extern int debugMode;
 
 // Delta time, measured in 60ths of a second
-// Capped at 60
+// Should be capped at 1
 extern double dt;
 
 // The current game state, uses GS_* constants
