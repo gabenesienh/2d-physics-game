@@ -17,11 +17,12 @@ const int GS_LAUNCHED = 0;
 const int GS_STARTED = 1;
 
 // Flags for use with debugMode
-const int DEBUG_PERFORMANCE_INFO = 0x00001;
-const int DEBUG_LEVEL_INFO       = 0x00010;
-const int DEBUG_PLAYER_INFO      = 0x00100;
-const int DEBUG_SHOW_HITBOXES    = 0x01000;
-const int DEBUG_SHOW_QUADS       = 0x10000;
+const int DEBUG_CONFIGS          = 0x000001;
+const int DEBUG_PERFORMANCE_INFO = 0x000010;
+const int DEBUG_LEVEL_INFO       = 0x000100;
+const int DEBUG_PLAYER_INFO      = 0x001000;
+const int DEBUG_SHOW_HITBOXES    = 0x010000;
+const int DEBUG_SHOW_QUADS       = 0x100000;
 
 // Enables debug features
 // To be used with DEBUG_* consts, use bitwise operations to combine flags

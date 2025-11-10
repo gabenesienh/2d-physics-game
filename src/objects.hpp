@@ -64,9 +64,9 @@ class GameObject;
 
 // Axis-aligned bounding box
 struct AABB : public AABBCommon {
-    vec2              center;
-    double            halfWidth;
-    double            halfHeight;
+    vec2   center;
+    double halfWidth;
+    double halfHeight;
 
     AABB(vec2 center, double halfWidth, double halfHeight);
 
