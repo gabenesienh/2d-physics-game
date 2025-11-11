@@ -1,3 +1,5 @@
+//TODO: format colors to window's surface on init()
+
 #include "util.hpp"
 
 #include <SDL2/SDL.h>
@@ -6,6 +8,7 @@
 
 #include "game.hpp"
 #include "objects.hpp"
+#include "graphics.hpp"
 
 using std::pow, std::sqrt;
 using std::cin, std::cout, std::endl;
@@ -119,6 +122,11 @@ bool init() {
         cout << "Error formatting game surface: " << SDL_GetError() << endl;
         system("pause");
         return false;
+    }
+
+    // Convert all colors to the window surface's format
+    for (auto color = debugColors.begin(); color != debugColors.end(); color++) {
+        // ...
     }
 
     return true;

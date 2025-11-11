@@ -5,6 +5,8 @@
 
 #include <SDL2/SDL.h>
 #include <cmath>
+#include <string>
+#include <unordered_map>
 
 #include "events.hpp"
 #include "game.hpp"
@@ -13,9 +15,8 @@
 #include "util.hpp"
 
 using std::abs, std::max;
-
-// Set colors if they're not already set
-void setColors();
+using std::string;
+using std::unordered_map;
 
 // Recursively draw a QuadTree
 template <typename T>
@@ -26,25 +27,21 @@ void drawTree(QuadTree<T>* tree, Uint32 color);
 // Width and height are adjusted per object while rendering
 SDL_Rect rendererRect;
 
-// Whether or not the necessary colors have been mapped yet
-// setColors should not be called if this is true
-bool isColorsSet = false;
-
-Uint32 blackColor;
-
-Uint32 debugTileColor;
-Uint32 debugHitboxColor;
-Uint32 debugAnchorColor;
-Uint32 debugDirectionColor;
-Uint32 debugPlayerAimColor;
-Uint32 debugObjTreeColor;
-Uint32 debugTileTreeColor;
+// In RGB format, should be formatted to the window surface's format on launch
+unordered_map<string, Uint32> debugColors = {
+    {"bg",        0x000000}, // Black
+    {"tile",      0xFFFFFF}, // White
+    {"hitbox",    0xFF1F1F}, // Red
+    {"anchor",    0x1FFFFF}, // Cyan
+    {"direction", 0xFF7F1F}, // Orange
+    {"playerAim", 0x1FFF1F}, // Green
+    {"objTree",   0xFF7F3F}, // Light orange
+    {"tileTree",  0x3F7F00}  // Dark green
+};
 
 void doRender() {
-    if (!isColorsSet) setColors();
-
     // Clear screen before drawing
-    SDL_FillRect(gameSurface, NULL, blackColor);
+    SDL_FillRect(gameSurface, NULL, debugColors["bg"]);
 
     for (Tile& tile : loadedLevel->getTiles()) {
         if (debugMode & DEBUG_SHOW_HITBOXES) {
@@ -55,14 +52,14 @@ void doRender() {
             rendererRect.x = tile.getX();
             rendererRect.y = tile.getY();
 
-            SDL_FillRect(gameSurface, &rendererRect, debugTileColor);
+            SDL_FillRect(gameSurface, &rendererRect, debugColors["tile"]);
         }
     }
 
     if (debugMode & DEBUG_SHOW_QUADS) {
         // Show boundaries of the collision trees
-        drawTree(tilesTree, debugTileTreeColor);
-        drawTree(gameObjectsTree, debugObjTreeColor);
+        drawTree(tilesTree, debugColors["tileTree"]);
+        drawTree(gameObjectsTree, debugColors["objTree"]);
     }
 
     for (GameObject* gobj : gameObjects) {
@@ -97,7 +94,7 @@ void doRender() {
                     break;
             }
 
-            SDL_FillRect(gameSurface, &rendererRect, debugHitboxColor);
+            SDL_FillRect(gameSurface, &rendererRect, debugColors["hitbox"]);
     
             /* -- Draw line from object's center to their direction -- */
     
@@ -113,7 +110,7 @@ void doRender() {
             int targetY = centerY + (gobj->getDirection().y * 25);
     
             drawLine(
-                gameSurface, rendererRect, debugDirectionColor,
+                gameSurface, rendererRect, debugColors["direction"],
                 centerX, centerY,
                 targetX, targetY
             );
@@ -122,7 +119,7 @@ void doRender() {
 
             if (gobj == player) {
                 drawLine(
-                    gameSurface, rendererRect, debugPlayerAimColor,
+                    gameSurface, rendererRect, debugColors["playerAim"],
                     centerX, centerY,
                     mouseScreenPos.x, mouseScreenPos.y
                 );
@@ -134,7 +131,7 @@ void doRender() {
             rendererRect.h = 4;
             rendererRect.x = gobj->getScreenX() - rendererRect.w/2;
             rendererRect.y = gobj->getScreenY() - rendererRect.h/2;
-            SDL_FillRect(gameSurface, &rendererRect, debugAnchorColor);
+            SDL_FillRect(gameSurface, &rendererRect, debugColors["anchor"]);
         }
     }
 
@@ -193,65 +190,4 @@ void drawTree(QuadTree<T>* tree, Uint32 color) {
             drawTree(quad, color);
         }
     }
-}
-
-// Necessary due to surface formats being unknown before util.cpp is run
-void setColors() {
-    blackColor = SDL_MapRGB(
-        gameSurface->format,
-        0,
-        0,
-        0
-    );
-
-    debugTileColor = SDL_MapRGB(
-        gameSurface->format,
-        255,
-        255,
-        255
-    );
-
-    debugHitboxColor = SDL_MapRGB(
-        gameSurface->format,
-        255,
-        31,
-        31
-    );
-
-    debugAnchorColor = SDL_MapRGB(
-        gameSurface->format,
-        31,
-        255,
-        255
-    );
-
-    debugDirectionColor = SDL_MapRGB(
-        gameSurface->format,
-        255,
-        127,
-        31
-    );
-
-    debugPlayerAimColor = SDL_MapRGB(
-        gameSurface->format,
-        31,
-        255,
-        31
-    );
-
-    debugObjTreeColor = SDL_MapRGB(
-        gameSurface->format,
-        255,
-        127,
-        63
-    );
-
-    debugTileTreeColor = SDL_MapRGB(
-        gameSurface->format,
-        63,
-        127,
-        0
-    );
-
-    isColorsSet = true;
 }

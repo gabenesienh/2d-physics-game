@@ -36,10 +36,10 @@ struct TileAABB : public AABBCommon {
 
     TileAABB(int typeId, int gridX, int gridY);
 
-    double getTopY() const;
-    double getBottomY() const;
-    double getLeftX() const;
-    double getRightX() const;
+    double getTopY() const override;
+    double getBottomY() const override;
+    double getLeftX() const override;
+    double getRightX() const override;
 };
 
 // Represents a single tile in a level

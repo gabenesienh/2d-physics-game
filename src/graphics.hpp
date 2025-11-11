@@ -4,6 +4,11 @@
 #define GRAPHICS_HPP
 
 #include <SDL2/SDL.h>
+#include <string>
+#include <unordered_map>
+
+using std::string;
+using std::unordered_map;
 
 // Draws a frame
 extern void doRender();
@@ -31,5 +36,8 @@ extern void drawRectangle(
     int          x1,
     int          y1
 );
+
+// Colors used for debug visualizations (hitboxes, aim directions, etc)
+extern unordered_map<string, Uint32> debugColors;
 
 #endif

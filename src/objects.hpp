@@ -70,10 +70,10 @@ struct AABB : public AABBCommon {
 
     AABB(vec2 center, double halfWidth, double halfHeight);
 
-    double getTopY() const;
-    double getBottomY() const;
-    double getLeftX() const;
-    double getRightX() const;
+    double getTopY() const override;
+    double getBottomY() const override;
+    double getLeftX() const override;
+    double getRightX() const override;
 };
 
 // Abstract class for specialized objects to implement
