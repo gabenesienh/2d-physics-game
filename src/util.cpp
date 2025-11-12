@@ -1,5 +1,3 @@
-//TODO: format colors to window's surface on init()
-
 #include "util.hpp"
 
 #include <SDL2/SDL.h>
@@ -125,8 +123,13 @@ bool init() {
     }
 
     // Convert all colors to the window surface's format
+    // Colors must initially be Uint32 formatted as RGB
     for (auto color = debugColors.begin(); color != debugColors.end(); color++) {
-        // ...
+        int r = (color->second & 0xFF0000) >> 4*4;
+        int g = (color->second & 0x00FF00) >> 4*2;
+        int b = (color->second & 0x0000FF) >> 4*0;
+
+        color->second = SDL_MapRGB(winSurface->format, r, g, b);
     }
 
     return true;

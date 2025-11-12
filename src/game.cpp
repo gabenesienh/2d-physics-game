@@ -13,6 +13,7 @@
 #include <vector>
 
 #include "events.hpp"
+#include "graphics.hpp"
 #include "levels.hpp"
 #include "objects.hpp"
 #include "preferences.hpp"
@@ -258,6 +259,10 @@ void rebuildGameObjectsTree() {
 
     for (GameObject* gobj : gameObjects) {
         gameObjectsTree->insert(gobj);
+    }
+
+    if (debugMode & DEBUG_SUBTICK_RENDERS) {
+        doRender();
     }
 }
 

@@ -1,5 +1,4 @@
 //TODO: stop rendering objects out of view
-//TODO: refactor color setting code
 
 #include "graphics.hpp"
 
@@ -29,19 +28,19 @@ SDL_Rect rendererRect;
 
 // In RGB format, should be formatted to the window surface's format on launch
 unordered_map<string, Uint32> debugColors = {
-    {"bg",        0x000000}, // Black
-    {"tile",      0xFFFFFF}, // White
-    {"hitbox",    0xFF1F1F}, // Red
-    {"anchor",    0x1FFFFF}, // Cyan
-    {"direction", 0xFF7F1F}, // Orange
-    {"playerAim", 0x1FFF1F}, // Green
-    {"objTree",   0xFF7F3F}, // Light orange
-    {"tileTree",  0x3F7F00}  // Dark green
+    {"background", 0x000000}, // Black
+    {"tile",       0xFFFFFF}, // White
+    {"hitbox",     0xFF1F1F}, // Red
+    {"anchor",     0x1FFFFF}, // Cyan
+    {"direction",  0xFF7F1F}, // Orange
+    {"player_aim", 0x1FFF1F}, // Green
+    {"obj_tree",   0xFF7F3F}, // Light orange
+    {"tile_tree",  0x3F7F00}  // Dark green
 };
 
 void doRender() {
     // Clear screen before drawing
-    SDL_FillRect(gameSurface, NULL, debugColors["bg"]);
+    SDL_FillRect(gameSurface, NULL, debugColors["background"]);
 
     for (Tile& tile : loadedLevel->getTiles()) {
         if (debugMode & DEBUG_SHOW_HITBOXES) {
@@ -58,8 +57,8 @@ void doRender() {
 
     if (debugMode & DEBUG_SHOW_QUADS) {
         // Show boundaries of the collision trees
-        drawTree(tilesTree, debugColors["tileTree"]);
-        drawTree(gameObjectsTree, debugColors["objTree"]);
+        drawTree(tilesTree, debugColors["tile_tree"]);
+        drawTree(gameObjectsTree, debugColors["obj_tree"]);
     }
 
     for (GameObject* gobj : gameObjects) {
@@ -119,7 +118,7 @@ void doRender() {
 
             if (gobj == player) {
                 drawLine(
-                    gameSurface, rendererRect, debugColors["playerAim"],
+                    gameSurface, rendererRect, debugColors["player_aim"],
                     centerX, centerY,
                     mouseScreenPos.x, mouseScreenPos.y
                 );

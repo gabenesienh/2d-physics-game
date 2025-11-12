@@ -16,12 +16,18 @@ Uint64 ticksLast = 0;
 int main(int argc, char** argv) {
     if (!init()) return 1;
 
-    debugMode =   DEBUG_CONFIGS
+    debugMode = 0
+                | DEBUG_CONFIGS
+                // | DEBUG_PERFORMANCE_INFO
+                // | DEBUG_LEVEL_INFO
+                // | DEBUG_PLAYER_INFO
                 | DEBUG_SHOW_HITBOXES
-                | DEBUG_SHOW_QUADS;
+                | DEBUG_SHOW_QUADS
+                // | DEBUG_SUBTICK_RENDERS
+                ;
 
     if (debugMode & DEBUG_CONFIGS) {
-        // Prevent a freeze related to breakpoints on Linux
+        // Prevents SDL from stealing the mouse cursor when a breakpoint is hit
         SDL_SetHint(SDL_HINT_MOUSE_AUTO_CAPTURE, "0");
     }
 
