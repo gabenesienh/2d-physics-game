@@ -17,7 +17,7 @@ using std::string;
 /* -- AABB -- */
 
 // Constructors
-AABB::AABB(vec2 center, double halfWidth, double halfHeight)
+AABB::AABB(vec2<double> center, double halfWidth, double halfHeight)
     : center(center),
       halfWidth(halfWidth),
       halfHeight(halfHeight) {}
@@ -30,27 +30,28 @@ double AABB::getRightX() const  { return this->center.x + this->halfWidth; }
 
 /* -- GameObject -- */
 
-/* IMPORTANT: For most cases, even internally, you do not want to manipulate
+/* 
+ * IMPORTANT: For most cases, even internally, you do not want to manipulate
  * this->bounds.center, since it refers to the bounding box's center,
  * without accounting for the object's alignment anchor! Instead, use the
  * proper getters and setters
  */
 
 // Getters
-AABB&     GameObject::getBounds()              { return this->bounds; }
-eAnchorX  GameObject::getAnchorOffsetX() const { return this->anchorOffsetX; }
-eAnchorY  GameObject::getAnchorOffsetY() const { return this->anchorOffsetY; }
-double    GameObject::getSpeedX() const        { return this->speedX; }
-double    GameObject::getSpeedY() const        { return this->speedY; }
-double    GameObject::getMoveSpeed() const     { return this->moveSpeed; }
-string    GameObject::getState() const         { return this->state; }
-vec2      GameObject::getDirection() const     { return this->direction; }
-eDirTypes GameObject::getDirectionType() const { return this->directionType; }
-double    GameObject::getWeight() const        { return this->weight; }
-vec2      GameObject::getAimDirection() const  { return this->aimDirection; }
-eAnchorX  GameObject::getAimOffsetX() const    { return this->aimOffsetX; }
-eAnchorY  GameObject::getAimOffsetY() const    { return this->aimOffsetY; }
-int       GameObject::getHealth() const        { return this->health; }
+AABB&        GameObject::getBounds()              { return this->bounds; }
+eAnchorX     GameObject::getAnchorOffsetX() const { return this->anchorOffsetX; }
+eAnchorY     GameObject::getAnchorOffsetY() const { return this->anchorOffsetY; }
+double       GameObject::getSpeedX() const        { return this->speedX; }
+double       GameObject::getSpeedY() const        { return this->speedY; }
+double       GameObject::getMoveSpeed() const     { return this->moveSpeed; }
+string       GameObject::getState() const         { return this->state; }
+vec2<double> GameObject::getDirection() const     { return this->direction; }
+eDirTypes    GameObject::getDirectionType() const { return this->directionType; }
+double       GameObject::getWeight() const        { return this->weight; }
+vec2<double> GameObject::getAimDirection() const  { return this->aimDirection; }
+eAnchorX     GameObject::getAimOffsetX() const    { return this->aimOffsetX; }
+eAnchorY     GameObject::getAimOffsetY() const    { return this->aimOffsetY; }
+int          GameObject::getHealth() const        { return this->health; }
 
 double GameObject::getX() const {
     switch (this->anchorOffsetX) {
@@ -108,7 +109,7 @@ void GameObject::setMoveSpeed(double moveSpeed) {
 void GameObject::setState(string state) {
     this->state = state;
 }
-bool GameObject::setDirection(vec2 direction) {
+bool GameObject::setDirection(vec2<double> direction) {
     // Normalize desired direction into unit vector
     direction = direction.normalized();
 
@@ -193,7 +194,7 @@ void GameObject::walk() {
         this->speedY = this->direction.y * this->moveSpeed;
     }
 }
-void GameObject::walk(vec2 direction) {
+void GameObject::walk(vec2<double> direction) {
     direction = direction.normalized();
 
     this->speedX = direction.x * this->moveSpeed;
@@ -201,7 +202,7 @@ void GameObject::walk(vec2 direction) {
         this->speedY = direction.y * this->moveSpeed;
     }
 }
-void GameObject::aimAt(vec2 target) {
+void GameObject::aimAt(vec2<double> target) {
     double aimX;
     double aimY;
 
@@ -236,7 +237,7 @@ void GameObject::aimAt(vec2 target) {
     this->aimDirection = this->aimDirection.normalized();
 }
 
-void GameObject::onCollideTile(Tile* tile) {
+void GameObject::onCollideTile(Tile* tile, vec2<int> intersection) {
     //TEMP: teleport the object to the tile's top, regardless of collision angle
     double destY = tile->getBounds().getTopY();
 

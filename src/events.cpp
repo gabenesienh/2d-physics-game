@@ -9,7 +9,7 @@ using std::array;
 
 array<bool, SDL_NUM_SCANCODES> keyStates = {false};
 array<bool, 5> mouseStates = {false};
-vec2 mouseScreenPos;
+vec2<int> mouseScreenPos;
 
 SDL_Event event;
 

@@ -18,11 +18,11 @@ const int    PLR_HEIGHT = 80;
 const double PLR_MOVESPEED = 2.5;
 
 // Direction values for GameObjects that move orthogonally
-const vec2 DIR_NONE = {0, 0};
-const vec2 DIR_LEFT = {-1, 0};
-const vec2 DIR_RIGHT = {1, 0};
-const vec2 DIR_UP = {0, -1};
-const vec2 DIR_DOWN = {0, 1};
+const vec2<double> DIR_NONE = {0, 0};
+const vec2<double> DIR_LEFT = {-1, 0};
+const vec2<double> DIR_RIGHT = {1, 0};
+const vec2<double> DIR_UP = {0, -1};
+const vec2<double> DIR_DOWN = {0, 1};
 
 // Sets of directions an object is allowed to have
 enum class eDirTypes {
@@ -64,11 +64,11 @@ class GameObject;
 
 // Axis-aligned bounding box
 struct AABB : public AABBCommon {
-    vec2   center;
-    double halfWidth;
-    double halfHeight;
+    vec2<double> center;
+    double       halfWidth;
+    double       halfHeight;
 
-    AABB(vec2 center, double halfWidth, double halfHeight);
+    AABB(vec2<double> center, double halfWidth, double halfHeight);
 
     double getTopY() const override;
     double getBottomY() const override;
@@ -79,37 +79,37 @@ struct AABB : public AABBCommon {
 // Abstract class for specialized objects to implement
 class GameObject {
     protected:
-        AABB       bounds        = AABB({0, 0}, 8, 8);
-        eAnchorX   anchorOffsetX = eAnchorX::middle;
-        eAnchorY   anchorOffsetY = eAnchorY::middle;
-        double     speedX        = 0;
-        double     speedY        = 0;
-        double     moveSpeed     = 1;
-        string     state         = "";
-        vec2       direction     = DIR_NONE;
-        eDirTypes  directionType = eDirTypes::none;
-        eWalkTypes walkType      = eWalkTypes::grounded;
-        double     weight        = 1; // Simple physics multiplier
-        vec2       aimDirection  = DIR_NONE;
-        eAnchorX   aimOffsetX    = eAnchorX::middle; // The point from which
-        eAnchorY   aimOffsetY    = eAnchorY::middle; // projectiles spawn
-        int        health        = 1;
-        bool       grounded      = false;
+        AABB         bounds        = AABB({0, 0}, 8, 8);
+        eAnchorX     anchorOffsetX = eAnchorX::middle;
+        eAnchorY     anchorOffsetY = eAnchorY::middle;
+        double       speedX        = 0;
+        double       speedY        = 0;
+        double       moveSpeed     = 1;
+        string       state         = "";
+        vec2<double> direction     = DIR_NONE;
+        eDirTypes    directionType = eDirTypes::none;
+        eWalkTypes   walkType      = eWalkTypes::grounded;
+        double       weight        = 1; // Simple physics multiplier
+        vec2<double> aimDirection  = DIR_NONE;
+        eAnchorX     aimOffsetX    = eAnchorX::middle; // The point from which
+        eAnchorY     aimOffsetY    = eAnchorY::middle; // projectiles spawn
+        int          health        = 1;
+        bool         grounded      = false;
     public:
-        AABB&     getBounds();
-        eAnchorX  getAnchorOffsetX() const;
-        eAnchorY  getAnchorOffsetY() const;
-        double    getSpeedX() const;
-        double    getSpeedY() const;
-        double    getMoveSpeed() const;
-        string    getState() const;
-        vec2      getDirection() const;
-        eDirTypes getDirectionType() const;
-        double    getWeight() const;
-        vec2      getAimDirection() const;
-        eAnchorX  getAimOffsetX() const;
-        eAnchorY  getAimOffsetY() const;
-        int       getHealth() const;
+        AABB&        getBounds();
+        eAnchorX     getAnchorOffsetX() const;
+        eAnchorY     getAnchorOffsetY() const;
+        double       getSpeedX() const;
+        double       getSpeedY() const;
+        double       getMoveSpeed() const;
+        string       getState() const;
+        vec2<double> getDirection() const;
+        eDirTypes    getDirectionType() const;
+        double       getWeight() const;
+        vec2<double> getAimDirection() const;
+        eAnchorX     getAimOffsetX() const;
+        eAnchorY     getAimOffsetY() const;
+        int          getHealth() const;
 
         // Get the values from the object's bounding box, but adjusted for the
         // anchor alignment
@@ -131,7 +131,7 @@ class GameObject {
         void setSpeedY(double speedY);
         void setMoveSpeed(double moveSpeed);
         void setState(string state);
-        bool setDirection(vec2 direction);
+        bool setDirection(vec2<double> direction);
         void setWeight(double weight);
 
         // Check if the object is visible and should be rendered
@@ -150,16 +150,16 @@ class GameObject {
         void walk();
 
         // Move the object moveSpeed units toward a direction
-        void walk(vec2 direction);
+        void walk(vec2<double> direction);
 
         // Change the object's aimDirection to aim at the given target
-        void aimAt(vec2 target);
+        void aimAt(vec2<double> target);
 
         // Run the object's per-tick logic
         virtual void tick() {};
 
         // Run the object's tile collision logic
-        virtual void onCollideTile(Tile* tile);
+        virtual void onCollideTile(Tile* tile, vec2<int> intersection);
 
         // Pure virtual destructor to ensure this class is abstract
         virtual ~GameObject() = 0;

@@ -111,7 +111,10 @@ case GS_STARTED:
     }
 
     // Have the player aim at and face the cursor
-    player->aimAt({mouseScreenPos.x, mouseScreenPos.y});
+    player->aimAt({
+        static_cast<double>(mouseScreenPos.x),
+        static_cast<double>(mouseScreenPos.y)
+    });
 
     if (mouseScreenPos.x < player->getScreenX()) {
         player->setDirection(DIR_LEFT);
@@ -192,9 +195,15 @@ case GS_STARTED:
             possibleCols = tilesTree->findPossibleCollisions(gobj->getBounds());
 
             for (Tile* possibleCol : possibleCols) {
-                if (gobj->getBounds().intersects(possibleCol->getBounds())) {
-                    gobj->onCollideTile(possibleCol);
+                // Will be {0, 0} if not colliding
+                vec2<int> intersection = gobj->getBounds().intersects(
+                                             possibleCol->getBounds()
+                                         );
+
+                if (intersection != INTERSECT_NONE) {
+                    gobj->onCollideTile(possibleCol, intersection);
                     collision = true;
+                    break;
                 }
             }
 

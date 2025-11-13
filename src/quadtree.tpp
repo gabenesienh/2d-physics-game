@@ -10,7 +10,6 @@ using std::vector;
 
 /* -- QuadTree -- */
 
-
 // Constructors
 template<typename T>
 QuadTree<T>::QuadTree(int level, AABB bounds)
@@ -45,19 +44,19 @@ void QuadTree<T>::clear() {
 
 template<typename T>
 void QuadTree<T>::subdivide() {
-    vec2 nwCenter = {
+    vec2<double> nwCenter = {
         this->bounds.center.x - this->bounds.halfWidth/2,
         this->bounds.center.y - this->bounds.halfHeight/2
     };
-    vec2 neCenter = {
+    vec2<double> neCenter = {
         this->bounds.center.x + this->bounds.halfWidth/2,
         this->bounds.center.y - this->bounds.halfHeight/2
     };
-    vec2 swCenter = {
+    vec2<double> swCenter = {
         this->bounds.center.x - this->bounds.halfWidth/2,
         this->bounds.center.y + this->bounds.halfHeight/2
     };
-    vec2 seCenter = {
+    vec2<double> seCenter = {
         this->bounds.center.x + this->bounds.halfWidth/2,
         this->bounds.center.y + this->bounds.halfHeight/2
     };
@@ -128,7 +127,7 @@ template<typename T>
 void QuadTree<T>::insert(T* item) {
     // Ignore this item if it's outside the bounds of the root node of the tree
     if (this->level == 0
-    && !item->getBounds().intersects(this->bounds)) {
+    &&  item->getBounds().intersects(this->bounds) == INTERSECT_NONE) {
         return;
     }
 

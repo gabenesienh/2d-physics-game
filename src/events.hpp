@@ -19,7 +19,7 @@ extern array<bool, SDL_NUM_SCANCODES> keyStates;
 extern array<bool, 5> mouseStates;
 
 // The current X and Y position of the mouse cursor on the screen
-extern vec2 mouseScreenPos;
+extern vec2<int> mouseScreenPos;
 
 // Event loop
 // Returns false when the window should close

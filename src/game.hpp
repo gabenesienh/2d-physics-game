@@ -17,16 +17,16 @@ const int GS_LAUNCHED = 0;
 const int GS_STARTED = 1;
 
 // Flags for use with debugMode
-const int DEBUG_CONFIGS          = 0x0000001;
-const int DEBUG_PERFORMANCE_INFO = 0x0000010;
-const int DEBUG_LEVEL_INFO       = 0x0000100;
-const int DEBUG_PLAYER_INFO      = 0x0001000;
-const int DEBUG_SHOW_HITBOXES    = 0x0010000;
-const int DEBUG_SHOW_QUADS       = 0x0100000;
-const int DEBUG_SUBTICK_RENDERS  = 0x1000000;
+const int DEBUG_CONFIGS          = 0b0000001;
+const int DEBUG_PERFORMANCE_INFO = 0b0000010;
+const int DEBUG_LEVEL_INFO       = 0b0000100;
+const int DEBUG_PLAYER_INFO      = 0b0001000;
+const int DEBUG_SHOW_HITBOXES    = 0b0010000;
+const int DEBUG_SHOW_QUADS       = 0b0100000;
+const int DEBUG_SUBTICK_RENDERS  = 0b1000000;
 
 // Enables debug features
-// To be used with DEBUG_* consts, use bitwise operations to combine flags
+// To be used with DEBUG_* flags
 extern int debugMode;
 
 // Delta time, measured in 60ths of a second

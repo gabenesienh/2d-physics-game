@@ -1,71 +1,77 @@
 #include "util.hpp"
 
 #include <SDL2/SDL.h>
-#include <cmath>
 #include <iostream>
 
 #include "game.hpp"
 #include "objects.hpp"
 #include "graphics.hpp"
 
-using std::pow, std::sqrt;
 using std::cin, std::cout, std::endl;
 
 SDL_Window* window;
 SDL_Surface* winSurface;
 SDL_Surface* gameSurface;
 
-/* -- vec2 class -- */
-
-bool vec2::operator==(const vec2& other) const {
-    return (this->x == other.x && this->y == other.y);
-}
-bool vec2::operator!=(const vec2& other) const {
-    return !this->operator==(other);
-}
-
-vec2 vec2::normalized() {
-    // Get vector magnitude (pythagorean theorem)
-    double mag = sqrt(pow(this->x, 2) + pow(this->y, 2));
-
-    return {
-        this->x /= mag,
-        this->y /= mag
-    };
-}
-
 /* -- AABBCommon class -- */
 
-bool AABBCommon::intersects(AABBCommon& other) const {
-    bool intersectsY = false;
-    bool intersectsX = false;
+vec2<int> AABBCommon::intersects(AABBCommon& other) const {
+    int intersectsX = INTERSECT_X_NONE;
+    int intersectsY = INTERSECT_Y_NONE;
 
-    if (this->getBottomY() > other.getTopY()
-    &&  this->getTopY()    < other.getBottomY()) {
-        // This box might be intersecting the other from the top side
-        intersectsY = true;
-    } else if (this->getTopY()    < other.getBottomY()
-      &&       this->getBottomY() > other.getTopY()   ) {
-        // This box might be intersecting the other from the bottom side
-        intersectsY = true;
-    }
-
-    // These boxes' top and bottom sides can't collide, so they can't intersect
-    if (!intersectsY) return false;
-
+    // Check intersection in X axis
     if (this->getRightX() > other.getLeftX()
     &&  this->getLeftX()  < other.getRightX()) {
-        // This box might be intersecting the other from the left side
-        intersectsX = true;
-    } else if (this->getLeftX()  < other.getRightX()
-      &&       this->getRightX() > other.getLeftX() ) {
-        // This box might be intersecting the other from the right side
-        intersectsX = true;
+        bool touchingLeft = false;
+        bool touchingRight = false;
+
+        if (this->getLeftX()  < other.getLeftX()
+        &&  this->getRightX() < other.getRightX()) {
+            // This box's right side might be touching the other's left side
+            touchingLeft = true;
+        } else if (this->getLeftX()  > other.getLeftX()
+          &&       this->getRightX() > other.getRightX()) {
+            // This box's left side might be touching the other's right side
+            touchingRight = true;
+        }
+
+        if (!touchingLeft && !touchingRight) {
+            // This box contains/is contained by the other in the X axis
+            intersectsX = INTERSECT_X_BOTH;
+        } else {
+            intersectsX = (touchingLeft) ? INTERSECT_X_LEFT : INTERSECT_X_RIGHT;
+        }
     }
 
-    if (!intersectsX) return false;
+    if (intersectsX == INTERSECT_X_NONE) return INTERSECT_NONE;
 
-    return true;
+    // Check intersection in Y axis
+    if (this->getBottomY() > other.getTopY()
+    &&  this->getTopY()    < other.getBottomY()) {
+        bool touchingTop = false;
+        bool touchingBottom = false;
+
+        if (this->getTopY()    < other.getTopY()
+        &&  this->getBottomY() < other.getBottomY()) {
+            // This box's bottom side might be touching the other's top side
+            touchingTop = true;
+        } else if (this->getTopY()    > other.getTopY()
+          &&       this->getBottomY() > other.getBottomY()) {
+            // This box's top side might be touching the other's bottom side
+            touchingBottom = true;
+        }
+
+        if (!touchingTop && !touchingBottom) {
+            // This box contains/is contained by the other in the Y axis
+            intersectsY = INTERSECT_Y_BOTH;
+        } else {
+            intersectsY = (touchingTop) ? INTERSECT_Y_TOP : INTERSECT_Y_BOTTOM;
+        }
+    }
+
+    if (intersectsY == INTERSECT_Y_NONE) return INTERSECT_NONE;
+
+    return {intersectsX, intersectsY};
 }
 
 AABBCommon::~AABBCommon() {};
