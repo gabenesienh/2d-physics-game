@@ -127,8 +127,8 @@ case GS_STARTED:
     && !mouseStatesTap[SDL_BUTTON_LEFT]) {
         Projectile* proj = new Projectile(player, 90, 15, 15);
         proj->teleport(
-            player->getX(),
-            player->getBounds().center.y
+            player->getAimX(),
+            player->getAimY()
         );
         proj->setWeight(0.85);
         proj->thrust(
@@ -153,11 +153,11 @@ case GS_STARTED:
         GameObject* gobj = gameObjects[i]; // For convenience
 
         // Apply gravity to objects
-        auto newSpeedY = (abs(gobj->getSpeedY())*GRAV_MULT + GRAV_ADD);
+        auto newSpeedY = (abs(gobj->getSpeedY())*GRAV_MULT + GRAV_ADD)*gobj->getWeight();
 
         gobj->thrust(
             0,
-            newSpeedY*gobj->getWeight()
+            newSpeedY
         );
 
         // Cap falling speed

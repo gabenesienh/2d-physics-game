@@ -31,7 +31,7 @@ unordered_map<string, Uint32> debugColors = {
     {"background", 0x000000}, // Black
     {"tile",       0xFFFFFF}, // White
     {"hitbox",     0xFF1F1F}, // Red
-    {"anchor",     0x1FFFFF}, // Cyan
+    {"pivot",      0x1FFFFF}, // Cyan
     {"direction",  0xFF7F1F}, // Orange
     {"player_aim", 0x1FFF1F}, // Green
     {"obj_tree",   0xFF7F3F}, // Light orange
@@ -70,28 +70,8 @@ void doRender() {
             rendererRect.w = gobj->getWidth();
             rendererRect.h = gobj->getHeight();
 
-            switch (gobj->getAnchorOffsetX()) {
-                case eAnchorX::left:
-                    rendererRect.x = gobj->getScreenX();
-                    break;
-                case eAnchorX::middle:
-                    rendererRect.x = gobj->getScreenX() - rendererRect.w/2;
-                    break;
-                case eAnchorX::right:
-                    rendererRect.x = gobj->getScreenX() - rendererRect.w;
-                    break;
-            }
-            switch (gobj->getAnchorOffsetY()) {
-                case eAnchorY::top:
-                    rendererRect.y = gobj->getScreenY();
-                    break;
-                case eAnchorY::middle:
-                    rendererRect.y = gobj->getScreenY() - rendererRect.h/2;
-                    break;
-                case eAnchorY::bottom:
-                    rendererRect.y = gobj->getScreenY() - rendererRect.h;
-                    break;
-            }
+            rendererRect.x = gobj->getScreenX() - rendererRect.w*((gobj->getPivotX() + 1)/2);
+            rendererRect.y = gobj->getScreenY() - rendererRect.h*((gobj->getPivotY() + 1)/2);
 
             SDL_FillRect(gameSurface, &rendererRect, debugColors["hitbox"]);
     
@@ -100,11 +80,11 @@ void doRender() {
             rendererRect.w = 1;
             rendererRect.h = 1;
     
-            // The starting point of the line (object's AABB's center)
-            int centerX = gobj->getBounds().center.x - rendererRect.w/2;
-            int centerY = gobj->getBounds().center.y - rendererRect.h/2;
+            // The starting point of the line (object's center)
+            int centerX = gobj->getX() - rendererRect.w/2;
+            int centerY = gobj->getY() - rendererRect.h/2;
     
-            // The ending point of the line
+            // The ending point of the line (a few units in its direction)
             int targetX = centerX + (gobj->getDirection().x * 25);
             int targetY = centerY + (gobj->getDirection().y * 25);
     
@@ -116,21 +96,24 @@ void doRender() {
     
             /* -- Draw line from player object(s) to cursor -- */
 
+            int aimX = gobj->getAimX() - rendererRect.w/2;
+            int aimY = gobj->getAimY() - rendererRect.h/2;
+
             if (gobj == player) {
                 drawLine(
                     gameSurface, rendererRect, debugColors["player_aim"],
-                    centerX, centerY,
+                    aimX, aimY,
                     mouseScreenPos.x, mouseScreenPos.y
                 );
             }
     
-            /* -- Draw object's anchor point -- */
+            /* -- Draw object's pivot -- */
     
             rendererRect.w = 4;
             rendererRect.h = 4;
             rendererRect.x = gobj->getScreenX() - rendererRect.w/2;
             rendererRect.y = gobj->getScreenY() - rendererRect.h/2;
-            SDL_FillRect(gameSurface, &rendererRect, debugColors["anchor"]);
+            SDL_FillRect(gameSurface, &rendererRect, debugColors["pivot"]);
         }
     }
 

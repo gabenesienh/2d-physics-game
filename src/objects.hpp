@@ -1,4 +1,5 @@
 //TODO: refactor GameObject::getScreen* methods into helper functions
+//TODO: add "no gravity" property to objects to bypass weight checks
 
 // Game object class definitions and related logic
 
@@ -38,20 +39,6 @@ enum class eWalkTypes {
     aerial
 };
 
-// Valid values for the position of a GameObject's alignment anchor
-// The anchor is the point from which the object's X and Y values are
-// calculated, from which the object will scale up or down in size, etc.
-enum class eAnchorX {
-    left,
-    middle,
-    right
-};
-enum class eAnchorY {
-    top,
-    middle,
-    bottom
-};
-
 // Used to check for classes derived from GameObject
 // This maybe isn't a good implementation but I couldn't think of a better one
 enum class eObjTypes {
@@ -76,12 +63,21 @@ struct AABB : public AABBCommon {
     double getRightX() const override;
 };
 
-// Abstract class for specialized objects to implement
+/* 
+ * Generic class for specialized objects to derive from
+ *
+ * The pivot is the point from which the object's X and Y values are
+ * calculated, from which the object will scale up or down in size, etc.
+ * Pivot values should scale from -1.0 to 1.0, with 0 being the center of the
+ * object's hitbox on that axis.
+ * 
+ * The same logic is used for aimOriginX and aimOriginY.
+ */
 class GameObject {
     protected:
         AABB         bounds        = AABB({0, 0}, 8, 8);
-        eAnchorX     anchorOffsetX = eAnchorX::middle;
-        eAnchorY     anchorOffsetY = eAnchorY::middle;
+        double       pivotX        = 0;
+        double       pivotY        = 0;
         double       speedX        = 0;
         double       speedY        = 0;
         double       moveSpeed     = 1;
@@ -91,14 +87,14 @@ class GameObject {
         eWalkTypes   walkType      = eWalkTypes::grounded;
         double       weight        = 1; // Simple physics multiplier
         vec2<double> aimDirection  = DIR_NONE;
-        eAnchorX     aimOffsetX    = eAnchorX::middle; // The point from which
-        eAnchorY     aimOffsetY    = eAnchorY::middle; // projectiles spawn
+        double       aimOriginX    = 0;
+        double       aimOriginY    = 0;
         int          health        = 1;
         bool         grounded      = false;
     public:
         AABB&        getBounds();
-        eAnchorX     getAnchorOffsetX() const;
-        eAnchorY     getAnchorOffsetY() const;
+        double       getPivotX() const;
+        double       getPivotY() const;
         double       getSpeedX() const;
         double       getSpeedY() const;
         double       getMoveSpeed() const;
@@ -107,16 +103,18 @@ class GameObject {
         eDirTypes    getDirectionType() const;
         double       getWeight() const;
         vec2<double> getAimDirection() const;
-        eAnchorX     getAimOffsetX() const;
-        eAnchorY     getAimOffsetY() const;
+        double       getAimOriginX() const;
+        double       getAimOriginY() const;
         int          getHealth() const;
 
         // Get the values from the object's bounding box, but adjusted for the
-        // anchor alignment
+        // pivot/aim origin
         double getX() const;
         double getY() const;
         double getWidth() const;
         double getHeight() const;
+        double getAimX() const;
+        double getAimY() const;
 
         // Same as getX and getY, but adjusted for the camera's position
         double getScreenX() const;
