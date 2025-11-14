@@ -86,7 +86,7 @@ bool init() {
     }
 
     window = SDL_CreateWindow(
-        "Game",
+        WINDOW_NAME.c_str(),
         SDL_WINDOWPOS_UNDEFINED,
         SDL_WINDOWPOS_UNDEFINED,
         WINDOW_WIDTH,

@@ -4,9 +4,13 @@
 #define UTIL_HPP
 
 #include <SDL2/SDL.h>
+#include <string>
 
-const int WINDOW_WIDTH  = 960;
-const int WINDOW_HEIGHT = 540;
+using std::string;
+
+const string WINDOW_NAME   = "2D Physics Game";
+const int    WINDOW_WIDTH  = 960;
+const int    WINDOW_HEIGHT = 540;
 
 const int INTERSECT_X_NONE  = 0;
 const int INTERSECT_X_LEFT  = 1;
